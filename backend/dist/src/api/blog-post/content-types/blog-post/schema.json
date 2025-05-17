@@ -37,7 +37,9 @@
         "blogstatus": {
             "type": "enumeration",
             "enum": [
-                "draft, published, scheduled"
+                "Draft",
+                "Published",
+                "Scheduled"
             ]
         },
         "scheduled_publish_date": {

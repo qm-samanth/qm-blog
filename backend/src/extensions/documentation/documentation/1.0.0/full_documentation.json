@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2025-05-17T19:54:47.592Z"
+    "x-generation-date": "2025-05-17T20:09:52.400Z"
   },
   "x-strapi-config": {
     "plugins": [
@@ -4720,7 +4720,9 @@
                 "blogstatus": {
                   "type": "string",
                   "enum": [
-                    "draft, published, scheduled"
+                    "Draft",
+                    "Published",
+                    "Scheduled"
                   ]
                 },
                 "scheduled_publish_date": {
@@ -5836,7 +5838,9 @@
               "blogstatus": {
                 "type": "string",
                 "enum": [
-                  "draft, published, scheduled"
+                  "Draft",
+                  "Published",
+                  "Scheduled"
                 ]
               },
               "scheduled_publish_date": {
@@ -6619,7 +6623,9 @@
           "blogstatus": {
             "type": "string",
             "enum": [
-              "draft, published, scheduled"
+              "Draft",
+              "Published",
+              "Scheduled"
             ]
           },
           "scheduled_publish_date": {
@@ -6807,7 +6813,9 @@
                       "blogstatus": {
                         "type": "string",
                         "enum": [
-                          "draft, published, scheduled"
+                          "Draft",
+                          "Published",
+                          "Scheduled"
                         ]
                       },
                       "scheduled_publish_date": {
@@ -8901,7 +8909,9 @@
                 "blogstatus": {
                   "type": "string",
                   "enum": [
-                    "draft, published, scheduled"
+                    "Draft",
+                    "Published",
+                    "Scheduled"
                   ]
                 },
                 "scheduled_publish_date": {
@@ -12540,7 +12550,9 @@
                 "blogstatus": {
                   "type": "string",
                   "enum": [
-                    "draft, published, scheduled"
+                    "Draft",
+                    "Published",
+                    "Scheduled"
                   ]
                 },
                 "scheduled_publish_date": {

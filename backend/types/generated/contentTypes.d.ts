@@ -428,7 +428,9 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
   };
   attributes: {
     authors: Schema.Attribute.Relation<'manyToMany', 'api::author.author'>;
-    blogstatus: Schema.Attribute.Enumeration<['draft, published, scheduled']>;
+    blogstatus: Schema.Attribute.Enumeration<
+      ['Draft', 'Published', 'Scheduled']
+    >;
     canonical_url: Schema.Attribute.String;
     categories: Schema.Attribute.Relation<
       'manyToMany',
