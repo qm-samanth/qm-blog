@@ -1,0 +1,123 @@
+{
+    "kind": "collectionType",
+    "collectionName": "blog_posts",
+    "info": {
+        "singularName": "blog-post",
+        "pluralName": "blog-posts",
+        "displayName": "BlogPost",
+        "description": ""
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "attributes": {
+        "title": {
+            "type": "string"
+        },
+        "slug": {
+            "type": "uid"
+        },
+        "content": {
+            "type": "richtext"
+        },
+        "excerpt": {
+            "type": "string"
+        },
+        "thumbnail": {
+            "type": "media",
+            "multiple": false,
+            "required": false,
+            "allowedTypes": [
+                "images",
+                "files",
+                "videos",
+                "audios"
+            ]
+        },
+        "blogstatus": {
+            "type": "enumeration",
+            "enum": [
+                "draft, published, scheduled"
+            ]
+        },
+        "scheduled_publish_date": {
+            "type": "datetime"
+        },
+        "views": {
+            "type": "integer"
+        },
+        "likes": {
+            "type": "integer"
+        },
+        "categories": {
+            "type": "relation",
+            "relation": "manyToMany",
+            "target": "api::category.category",
+            "inversedBy": "blog_posts"
+        },
+        "tags": {
+            "type": "relation",
+            "relation": "manyToMany",
+            "target": "api::tag.tag",
+            "inversedBy": "blog_posts"
+        },
+        "meta_title": {
+            "type": "string"
+        },
+        "meta_description": {
+            "type": "text"
+        },
+        "canonical_url": {
+            "type": "string"
+        },
+        "og_title": {
+            "type": "string"
+        },
+        "og_description": {
+            "type": "text"
+        },
+        "og_image": {
+            "type": "media",
+            "multiple": false,
+            "required": false,
+            "allowedTypes": [
+                "images",
+                "files",
+                "videos",
+                "audios"
+            ]
+        },
+        "twitter_title": {
+            "type": "string"
+        },
+        "twitter_description": {
+            "type": "text"
+        },
+        "twitter_image": {
+            "type": "media",
+            "multiple": false,
+            "required": false,
+            "allowedTypes": [
+                "images",
+                "files",
+                "videos",
+                "audios"
+            ]
+        },
+        "noindex": {
+            "type": "boolean"
+        },
+        "nofollow": {
+            "type": "boolean"
+        },
+        "json_ld": {
+            "type": "json"
+        },
+        "authors": {
+            "type": "relation",
+            "relation": "manyToMany",
+            "target": "api::author.author",
+            "inversedBy": "blog_posts"
+        }
+    }
+}

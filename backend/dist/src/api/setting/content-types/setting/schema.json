@@ -1,0 +1,93 @@
+{
+    "kind": "singleType",
+    "collectionName": "settings",
+    "info": {
+        "singularName": "setting",
+        "pluralName": "settings",
+        "displayName": "Settings",
+        "description": ""
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "attributes": {
+        "blog_title": {
+            "type": "string"
+        },
+        "blog_description": {
+            "type": "text"
+        },
+        "logo": {
+            "type": "media",
+            "multiple": false,
+            "required": false,
+            "allowedTypes": [
+                "images",
+                "files",
+                "videos",
+                "audios"
+            ]
+        },
+        "favicon": {
+            "type": "media",
+            "multiple": false,
+            "required": false,
+            "allowedTypes": [
+                "images",
+                "files",
+                "videos",
+                "audios"
+            ]
+        },
+        "contact_email": {
+            "type": "email"
+        },
+        "social_links": {
+            "type": "json"
+        },
+        "default_meta_title": {
+            "type": "string"
+        },
+        "default_meta_description": {
+            "type": "text"
+        },
+        "default_social_image": {
+            "allowedTypes": [
+                "images",
+                "files",
+                "videos",
+                "audios"
+            ],
+            "type": "media",
+            "multiple": false
+        },
+        "robots_txt": {
+            "type": "string"
+        },
+        "sitemap_url": {
+            "type": "string"
+        },
+        "default_og_title": {
+            "type": "string"
+        },
+        "default_og_description": {
+            "type": "text"
+        },
+        "default_twitter_title": {
+            "type": "string"
+        },
+        "default_twitter_description": {
+            "type": "text"
+        },
+        "default_twitter_image": {
+            "allowedTypes": [
+                "images",
+                "files",
+                "videos",
+                "audios"
+            ],
+            "type": "media",
+            "multiple": false
+        }
+    }
+}

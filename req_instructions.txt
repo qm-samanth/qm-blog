@@ -1,0 +1,111 @@
+1. User Authentication & Authorization
+Secure login/logout for admin users.
+Role-based access (Admin, Editor, Author).
+Admins can manage user accounts and roles.
+Password reset via email.
+Only authenticated users can access the admin panel.
+
+2. Blog Post Management
+Create, edit, delete, publish/unpublish blog posts.
+Rich text editor for content.
+Add images (uploaded to cloud) in post body.
+Upload and set a thumbnail image (stored locally).
+Schedule posts for future publishing.
+Draft vs. published status.
+Assign posts to categories and tags.
+Track author and last modified date.
+
+3. Category & Tag Management
+Create, edit, delete categories.
+Assign categories/tags to posts.
+Tag suggestions/autocomplete.
+Manage categories and tags from a dedicated section.
+
+6. Author Management
+Create, edit, delete author profiles.
+Author profiles include name, bio, profile picture, and social links.
+Assign authors to posts.
+List authors and their posts.
+
+7. Dashboard & Analytics
+Overview of recent posts, drafts, scheduled posts.
+Statistics: total posts, published posts, posts per author.
+Recent activity feed.
+Basic analytics: post views, likes, engagement.
+
+8. Settings
+Configure blog settings: title, description, logo, favicon, contact email.
+Social media links for blog display.
+Settings accessible only to Admins.
+
+9. Notifications
+Email notifications for key events (e.g., post published).
+In-app notifications for admins.
+Manage notification preferences per user.
+
+10. Security & Audit
+Log all user actions with timestamp and user info.
+Admins can view audit logs.
+Enforce secure password policies and session management.
+
+12. Rich SEO Features
+Each post, page, and category supports:
+Custom meta title and meta description fields.
+Custom slug (URL).
+Open Graph and Twitter Card fields (title, description, image).
+Canonical URL field.
+Option to set noindex/nofollow for search engines.
+Structured data (JSON-LD) editor for advanced SEO.
+Global SEO settings for default meta tags, social sharing image, robots.txt, and sitemap.xml.
+Preview how posts will look in search results and on social media.
+Automatic generation of sitemap.xml and robots.txt.
+SEO analysis tool to suggest improvements (e.g., keyword density, readability).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Step 1: Backend Setup (Strapi + PostgreSQL)
+
+Finish initializing Strapi in your main folder, connected to your qualminds_blog database.
+Define core content types: User, Role, Post, Category, Tag, Author, Settings.
+Configure authentication, roles, and permissions.
+Test API endpoints with Strapi’s built-in admin panel.
+Step 2: Frontend Admin Panel (React + TypeScript)
+
+Scaffold a new React project for your admin panel.
+Set up routing, authentication (login/logout), and protected routes.
+Integrate Ant Design or Material-UI for UI components.
+Step 3: Core Features Implementation
+
+User & Role Management: List, create, edit, delete users and assign roles.
+Blog Post Management: CRUD for posts, rich text editor, image uploads, scheduling, drafts.
+Category & Tag Management: CRUD, assign to posts, tag suggestions.
+Author Management: CRUD for author profiles, assign to posts.
+Settings: Blog info, logo, social links, etc.
+Dashboard: Stats, recent activity, analytics.
+Notifications: Email and in-app (basic setup).
+Security & Audit: Logging actions, enforcing password policies.
+SEO: Meta fields, Open Graph, sitemap, robots.txt, preview.
+Step 4: Advanced Features & Polish
+
+Analytics endpoints and dashboard widgets.
+Notification preferences and advanced audit logs.
+SEO analysis integration (yoastseo).
+Custom endpoints for sitemap.xml, robots.txt, and SEO previews.
+
+
