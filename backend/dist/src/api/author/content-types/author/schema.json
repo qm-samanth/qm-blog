@@ -4,7 +4,8 @@
     "info": {
         "singularName": "author",
         "pluralName": "authors",
-        "displayName": "Author"
+        "displayName": "Author",
+        "description": ""
     },
     "options": {
         "draftAndPublish": true
@@ -18,16 +19,6 @@
         },
         "bio": {
             "type": "richtext"
-        },
-        "profile_picture": {
-            "allowedTypes": [
-                "images",
-                "files",
-                "videos",
-                "audios"
-            ],
-            "type": "media",
-            "multiple": false
         },
         "social_links": {
             "type": "json"
@@ -43,6 +34,9 @@
             "relation": "oneToOne",
             "target": "plugin::users-permissions.user",
             "mappedBy": "author"
+        },
+        "profile_pic_url": {
+            "type": "string"
         }
     }
 }

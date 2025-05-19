@@ -376,6 +376,7 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
 export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
   collectionName: 'authors';
   info: {
+    description: '';
     displayName: 'Author';
     pluralName: 'authors';
     singularName: 'author';
@@ -399,9 +400,7 @@ export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     name: Schema.Attribute.String;
-    profile_picture: Schema.Attribute.Media<
-      'images' | 'files' | 'videos' | 'audios'
-    >;
+    profile_pic_url: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID;
     social_links: Schema.Attribute.JSON;
