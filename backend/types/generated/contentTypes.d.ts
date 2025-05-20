@@ -427,9 +427,6 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
   };
   attributes: {
     authors: Schema.Attribute.Relation<'manyToMany', 'api::author.author'>;
-    blogstatus: Schema.Attribute.Enumeration<
-      ['Draft', 'Published', 'Scheduled']
-    >;
     canonical_url: Schema.Attribute.String;
     categories: Schema.Attribute.Relation<
       'manyToMany',
@@ -453,18 +450,15 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
     nofollow: Schema.Attribute.Boolean;
     noindex: Schema.Attribute.Boolean;
     og_description: Schema.Attribute.Text;
-    og_image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    og_image: Schema.Attribute.String;
     og_title: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    scheduled_publish_date: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID;
     tags: Schema.Attribute.Relation<'manyToMany', 'api::tag.tag'>;
-    thumbnail: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    thumbnail_url: Schema.Attribute.String;
     title: Schema.Attribute.String;
     twitter_description: Schema.Attribute.Text;
-    twitter_image: Schema.Attribute.Media<
-      'images' | 'files' | 'videos' | 'audios'
-    >;
+    twitter_image: Schema.Attribute.String;
     twitter_title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

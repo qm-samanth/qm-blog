@@ -23,28 +23,6 @@
     "excerpt": {
       "type": "string"
     },
-    "thumbnail": {
-      "type": "media",
-      "multiple": false,
-      "required": false,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
-    },
-    "blogstatus": {
-      "type": "enumeration",
-      "enum": [
-        "Draft",
-        "Published",
-        "Scheduled"
-      ]
-    },
-    "scheduled_publish_date": {
-      "type": "datetime"
-    },
     "views": {
       "type": "integer"
     },
@@ -78,33 +56,11 @@
     "og_description": {
       "type": "text"
     },
-    "og_image": {
-      "type": "media",
-      "multiple": false,
-      "required": false,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
-    },
     "twitter_title": {
       "type": "string"
     },
     "twitter_description": {
       "type": "text"
-    },
-    "twitter_image": {
-      "type": "media",
-      "multiple": false,
-      "required": false,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
     },
     "noindex": {
       "type": "boolean"
@@ -120,6 +76,15 @@
       "relation": "manyToMany",
       "target": "api::author.author",
       "inversedBy": "blog_posts"
+    },
+    "thumbnail_url": {
+      "type": "string"
+    },
+    "og_image": {
+      "type": "string"
+    },
+    "twitter_image": {
+      "type": "string"
     }
   }
 }
