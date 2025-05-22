@@ -21,7 +21,7 @@
             "type": "richtext"
         },
         "excerpt": {
-            "type": "string"
+            "type": "text"
         },
         "views": {
             "type": "integer"

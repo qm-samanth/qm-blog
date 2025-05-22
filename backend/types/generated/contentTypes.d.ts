@@ -436,7 +436,7 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    excerpt: Schema.Attribute.String;
+    excerpt: Schema.Attribute.Text;
     json_ld: Schema.Attribute.JSON;
     likes: Schema.Attribute.Integer;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -496,54 +496,6 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
-export interface ApiSettingSetting extends Struct.SingleTypeSchema {
-  collectionName: 'settings';
-  info: {
-    description: '';
-    displayName: 'Settings';
-    pluralName: 'settings';
-    singularName: 'setting';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    blog_description: Schema.Attribute.Text;
-    blog_title: Schema.Attribute.String;
-    contact_email: Schema.Attribute.Email;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    default_meta_description: Schema.Attribute.Text;
-    default_meta_title: Schema.Attribute.String;
-    default_og_description: Schema.Attribute.Text;
-    default_og_title: Schema.Attribute.String;
-    default_social_image: Schema.Attribute.Media<
-      'images' | 'files' | 'videos' | 'audios'
-    >;
-    default_twitter_description: Schema.Attribute.Text;
-    default_twitter_image: Schema.Attribute.Media<
-      'images' | 'files' | 'videos' | 'audios'
-    >;
-    default_twitter_title: Schema.Attribute.String;
-    favicon: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::setting.setting'
-    > &
-      Schema.Attribute.Private;
-    logo: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
-    publishedAt: Schema.Attribute.DateTime;
-    robots_txt: Schema.Attribute.String;
-    sitemap_url: Schema.Attribute.String;
-    social_links: Schema.Attribute.JSON;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1094,7 +1046,6 @@ declare module '@strapi/strapi' {
       'api::author.author': ApiAuthorAuthor;
       'api::blog-post.blog-post': ApiBlogPostBlogPost;
       'api::category.category': ApiCategoryCategory;
-      'api::setting.setting': ApiSettingSetting;
       'api::tag.tag': ApiTagTag;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
