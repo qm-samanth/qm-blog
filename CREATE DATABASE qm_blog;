@@ -1,0 +1,59 @@
+
+
+-- 1. Enable UUID support (for modern, secure IDs)
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- 2. Define Custom Types (Enums)
+-- This enforces that ONLY these specific values can be entered.
+CREATE TYPE user_role AS ENUM ('USER', 'REVIEWER', 'ADMIN');
+CREATE TYPE post_status AS ENUM ('DRAFT', 'PENDING', 'PUBLISHED', 'REJECTED');
+
+-- 3. Users Table
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    role user_role NOT NULL DEFAULT 'USER',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 4. Categories Table
+CREATE TABLE categories (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    slug VARCHAR(100) UNIQUE NOT NULL
+);
+
+-- 5. Posts Table
+CREATE TABLE posts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    content TEXT NOT NULL,
+    author_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    category_id INT REFERENCES categories(id) ON DELETE SET NULL,
+    status post_status NOT NULL DEFAULT 'DRAFT',
+    reviewer_id UUID REFERENCES users(id), -- Tracks who approved/rejected
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 6. Add Indexes for Speed
+-- These make your queries (like "find all pending posts") much faster.
+CREATE INDEX idx_posts_status ON posts(status);
+CREATE INDEX idx_posts_author ON posts(author_id);
+CREATE INDEX idx_posts_category ON posts(category_id);
+
+-- 7. Add a function to auto-update the 'updated_at' timestamp
+CREATE OR REPLACE FUNCTION update_modified_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = now();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER update_post_modtime
+    BEFORE UPDATE ON posts
+    FOR EACH ROW
+    EXECUTE PROCEDURE update_modified_column();
