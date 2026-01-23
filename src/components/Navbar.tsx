@@ -19,7 +19,7 @@ export function Navbar() {
           {session?.user ? (
             <>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">{session.user.name}</span>
+                <span className="text-sm text-gray-600">{session.user.email}</span>
                 <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
                   {session.user.role}
                 </span>

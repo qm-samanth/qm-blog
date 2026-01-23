@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { updatePost } from "@/lib/actions/posts";
+import { updatePost, getCategories, type CategoryDTO } from "@/lib/actions/posts";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -10,14 +10,35 @@ interface Post {
   id: string;
   title: string;
   content: string;
+  category_id?: number;
+  status?: string;
 }
 
 export function EditPostForm({ post }: { post: Post }) {
   const router = useRouter();
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.content);
+  const [categoryId, setCategoryId] = useState<string>(post.category_id?.toString() || "");
+  const [cats, setCats] = useState<CategoryDTO[]>([]);
   const [saving, setSaving] = useState(false);
+  const [catsLoading, setCatsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isPublished = post.status === "PUBLISHED";
+
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const result = await getCategories();
+        setCats(result);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+      } finally {
+        setCatsLoading(false);
+      }
+    }
+
+    fetchCategories();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +53,7 @@ export function EditPostForm({ post }: { post: Post }) {
       await updatePost(post.id, {
         title,
         content,
+        categoryId: categoryId ? parseInt(categoryId) : undefined,
       });
 
       router.push(`/posts/${post.id}`);
@@ -50,6 +72,12 @@ export function EditPostForm({ post }: { post: Post }) {
         </div>
       )}
 
+      {isPublished && (
+        <div className="mb-6 p-4 bg-blue-100 border border-blue-400 text-blue-700 rounded">
+          <strong>Note:</strong> Editing a published post will set it back to <strong>DRAFT</strong> status. You'll need to submit it for review again before it can be published.
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
@@ -64,6 +92,26 @@ export function EditPostForm({ post }: { post: Post }) {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
           />
+        </div>
+
+        <div>
+          <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+            Category (Optional)
+          </label>
+          <select
+            id="category"
+            value={categoryId}
+            onChange={(e) => setCategoryId(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            disabled={catsLoading}
+          >
+            <option value="">Select a category...</option>
+            {cats.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>

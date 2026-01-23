@@ -19,9 +19,20 @@ export async function getPostsByRole(
   offset: number = 0
 ): Promise<Post[]> {
   try {
-    if (userRole === "ADMIN" || userRole === "REVIEWER") {
-      // ADMIN and REVIEWER see all posts
+    if (userRole === "ADMIN") {
+      // ADMIN sees all posts
       const result = await db.query.posts.findMany({
+        orderBy: [desc(posts.created_at)],
+        limit,
+        offset,
+      });
+      return result as Post[];
+    }
+
+    if (userRole === "REVIEWER") {
+      // REVIEWER sees only pending posts for review
+      const result = await db.query.posts.findMany({
+        where: eq(posts.status, "PENDING"),
         orderBy: [desc(posts.created_at)],
         limit,
         offset,

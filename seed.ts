@@ -1,5 +1,6 @@
 import { db } from "./src/db/index";
 import { users, categories } from "./src/db/schema";
+import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcryptjs";
 
 async function seed() {
@@ -15,18 +16,21 @@ async function seed() {
       .insert(users)
       .values([
         {
+          id: uuidv4(),
           email: "admin@example.com",
           password_hash: adminPassword,
           role: "ADMIN",
           created_at: new Date(),
         },
         {
+          id: uuidv4(),
           email: "reviewer@example.com",
           password_hash: reviewerPassword,
           role: "REVIEWER",
           created_at: new Date(),
         },
         {
+          id: uuidv4(),
           email: "user@example.com",
           password_hash: userPassword,
           role: "USER",

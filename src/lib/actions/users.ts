@@ -3,6 +3,7 @@
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcryptjs";
 
 type DBUserRole = "ADMIN" | "REVIEWER" | "USER";
@@ -10,7 +11,6 @@ type DBUserRole = "ADMIN" | "REVIEWER" | "USER";
 export async function createUser(
   email: string,
   password: string,
-  name: string,
   role: DBUserRole = "USER"
 ) {
   try {
@@ -30,10 +30,11 @@ export async function createUser(
     const newUser = await db
       .insert(users)
       .values({
+        id: uuidv4(),
         email,
-        password: hashedPassword,
-        name,
+        password_hash: hashedPassword,
         role: role as DBUserRole,
+        created_at: new Date(),
       })
       .returning();
 

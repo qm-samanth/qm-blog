@@ -69,7 +69,7 @@ export function PostCard({
           </Link>
           <div className="mt-2 flex items-center gap-2">
             <span className="text-sm text-gray-600">
-              By {post.author?.name || "Unknown"}
+              Post
             </span>
             <span className="text-sm text-gray-400">•</span>
             <time className="text-sm text-gray-600">
@@ -84,7 +84,7 @@ export function PostCard({
 
       {/* Content Preview */}
       <p className="mt-3 line-clamp-3 text-gray-700">
-        {post.excerpt || post.content}
+        {post.content.substring(0, 200)}...
       </p>
 
       {/* Category and Metadata */}

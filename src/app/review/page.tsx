@@ -122,14 +122,14 @@ export default function ReviewPage() {
                       {post.title}
                     </h2>
                     <p className="text-sm text-gray-600 mt-1">
-                      By {post.author?.name || "Unknown"}
+                      Post ID: {post.id.substring(0, 8)}...
                     </p>
                   </div>
                   <Badge className="bg-yellow-100 text-yellow-800">PENDING</Badge>
                 </div>
 
                 <p className="text-gray-700 line-clamp-3">
-                  {post.excerpt || post.content}
+                  {post.content.substring(0, 200)}...
                 </p>
 
                 <div className="flex gap-2">

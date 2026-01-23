@@ -17,9 +17,8 @@ async function testConnection() {
         console.log(`   User ${index + 1}:`);
         console.log(`   - ID: ${user.id}`);
         console.log(`   - Email: ${user.email}`);
-        console.log(`   - Name: ${user.name}`);
         console.log(`   - Role: ${user.role}`);
-        console.log(`   - Created: ${user.createdAt}\n`);
+        console.log(`   - Created: ${user.created_at}\n`);
       });
     } else {
       console.log("2️⃣  No users found yet. Run 'npm run seed' to add demo users.\n");

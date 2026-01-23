@@ -10,12 +10,17 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
 export function SmartFeed() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Only fetch when session status is determined
+    if (status === "loading") {
+      return;
+    }
+
     async function fetchPosts() {
       try {
         setLoading(true);
@@ -30,7 +35,7 @@ export function SmartFeed() {
     }
 
     fetchPosts();
-  }, [session]);
+  }, [status, session?.user?.id, session?.user?.role]);
 
   const handleDelete = (postId: string) => {
     setPosts(posts.filter((p) => p.id !== postId));

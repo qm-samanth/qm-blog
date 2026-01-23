@@ -2,22 +2,49 @@
 
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { posts } from "@/db/schema";
+import { posts, users, categories } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
+import { v4 as uuidv4 } from "uuid";
 import type { PostStatus } from "@/types";
 
 interface CreatePostInput {
   title: string;
   content: string;
-  excerpt?: string;
-  categoryId?: string;
+  categoryId?: number;
+}
+
+export interface CategoryDTO {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+export async function getCategories(): Promise<CategoryDTO[]> {
+  try {
+    const result = await db.select().from(categories);
+    return result as CategoryDTO[];
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    return [];
+  }
+}
+
+export async function getReviewers() {
+  try {
+    const result = await db.query.users.findMany({
+      where: eq(users.role, "REVIEWER"),
+    });
+    return result.map((r) => ({ id: r.id, email: r.email }));
+  } catch (error) {
+    console.error("Error fetching reviewers:", error);
+    return [];
+  }
 }
 
 interface UpdatePostInput {
   title?: string;
   content?: string;
-  excerpt?: string;
-  categoryId?: string;
+  categoryId?: number;
   status?: PostStatus;
 }
 
@@ -40,13 +67,17 @@ export async function createPost(input: CreatePostInput) {
       .replace(/\s+/g, "-")
       .replace(/-+/g, "-");
 
+    const now = new Date();
     const newPost = await db.insert(posts).values({
+      id: uuidv4(),
       title: input.title,
       slug: slug,
       content: input.content,
       author_id: session.user.id,
-      category_id: input.categoryId ? parseInt(input.categoryId) : null,
+      category_id: input.categoryId || null,
       status: "DRAFT",
+      created_at: now,
+      updated_at: now,
     }).returning();
 
     return newPost[0];
@@ -73,14 +104,6 @@ export async function updatePost(postId: string, input: UpdatePostInput) {
       throw new Error("Post not found");
     }
 
-    // Check authorization: Only owner or ADMIN can update
-    if (
-      session.user.role !== "ADMIN" &&
-      post.authorId !== session.user.id
-    ) {
-      throw new Error("Unauthorized: You can only update your own posts");
-    }
-
     // REVIEWER can only update status
     if (session.user.role === "REVIEWER") {
       if (!input.status) {
@@ -91,7 +114,7 @@ export async function updatePost(postId: string, input: UpdatePostInput) {
         .update(posts)
         .set({
           status: input.status,
-          updatedAt: new Date(),
+          updated_at: new Date(),
         })
         .where(eq(posts.id, postId))
         .returning();
@@ -99,16 +122,25 @@ export async function updatePost(postId: string, input: UpdatePostInput) {
       return updatedPost[0];
     }
 
+    // Check authorization: Only owner or ADMIN can edit content
+    if (
+      session.user.role !== "ADMIN" &&
+      post.author_id !== session.user.id
+    ) {
+      throw new Error("Unauthorized: You can only update your own posts");
+    }
+
     // Update post
     const updatedPost = await db
       .update(posts)
       .set({
-        title: input.title,
-        content: input.content,
-        excerpt: input.excerpt,
-        categoryId: input.categoryId,
-        status: input.status,
-        updatedAt: new Date(),
+        ...(input.title && { title: input.title }),
+        ...(input.content && { content: input.content }),
+        ...(input.categoryId !== undefined && { category_id: input.categoryId }),
+        // If editing a published post, revert to DRAFT for review
+        ...(post.status === "PUBLISHED" && !input.status && { status: "DRAFT" }),
+        ...(input.status && { status: input.status }),
+        updated_at: new Date(),
       })
       .where(eq(posts.id, postId))
       .returning();
@@ -142,7 +174,7 @@ export async function deletePost(postId: string) {
     // Check authorization: Only owner or ADMIN can delete
     if (
       session.user.role !== "ADMIN" &&
-      post.authorId !== session.user.id
+      post.author_id !== session.user.id
     ) {
       throw new Error("Unauthorized: You can only delete your own posts");
     }
@@ -183,8 +215,7 @@ export async function publishPost(postId: string) {
       .update(posts)
       .set({
         status: "PUBLISHED",
-        publishedAt: new Date(),
-        updatedAt: new Date(),
+        updated_at: new Date(),
       })
       .where(eq(posts.id, postId))
       .returning();
@@ -198,7 +229,7 @@ export async function publishPost(postId: string) {
   }
 }
 
-export async function submitForReview(postId: string) {
+export async function submitForReview(postId: string, reviewerId?: string) {
   const session = await auth();
 
   if (!session?.user) {
@@ -215,15 +246,28 @@ export async function submitForReview(postId: string) {
     }
 
     // Check ownership
-    if (post.authorId !== session.user.id && session.user.role !== "ADMIN") {
+    if (post.author_id !== session.user.id && session.user.role !== "ADMIN") {
       throw new Error("Unauthorized: You can only submit your own posts");
+    }
+
+    // Verify reviewer exists if provided
+    let finalReviewerId = reviewerId;
+    if (reviewerId) {
+      const reviewer = await db.query.users.findFirst({
+        where: eq(users.id, reviewerId),
+      });
+      if (!reviewer || reviewer.role !== "REVIEWER") {
+        throw new Error("Invalid reviewer selected");
+      }
+      finalReviewerId = reviewer.id;
     }
 
     const updatedPost = await db
       .update(posts)
       .set({
         status: "PENDING",
-        updatedAt: new Date(),
+        ...(finalReviewerId && { reviewer_id: finalReviewerId }),
+        updated_at: new Date(),
       })
       .where(eq(posts.id, postId))
       .returning();

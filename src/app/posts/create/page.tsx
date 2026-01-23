@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { createPost } from "@/lib/actions/posts";
+import { createPost, getCategories, type CategoryDTO } from "@/lib/actions/posts";
 import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/Navbar";
 import { ArrowLeft } from "lucide-react";
@@ -14,13 +14,31 @@ export default function CreatePostPage() {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [categoryId, setCategoryId] = useState<string>("");
+  const [cats, setCats] = useState<CategoryDTO[]>([]);
   const [loading, setLoading] = useState(false);
+  const [catsLoading, setCatsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   if (status === "unauthenticated") {
     router.push("/auth/signin");
     return null;
   }
+
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const result = await getCategories();
+        setCats(result);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+      } finally {
+        setCatsLoading(false);
+      }
+    }
+
+    fetchCategories();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +53,7 @@ export default function CreatePostPage() {
       const newPost = await createPost({
         title,
         content,
+        categoryId: categoryId ? parseInt(categoryId) : undefined,
       });
 
       router.push(`/posts/${newPost.id}`);
@@ -78,6 +97,26 @@ export default function CreatePostPage() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
+              </div>
+
+              <div>
+                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                  Category (Optional)
+                </label>
+                <select
+                  id="category"
+                  value={categoryId}
+                  onChange={(e) => setCategoryId(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  disabled={catsLoading}
+                >
+                  <option value="">Select a category...</option>
+                  {cats.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>

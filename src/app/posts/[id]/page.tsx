@@ -2,7 +2,7 @@
 
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Edit2, Trash2 } from "lucide-react";
+import { ArrowLeft, Edit2 } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/db";
 import { posts } from "@/db/schema";
@@ -10,6 +10,7 @@ import { eq } from "drizzle-orm";
 import { format } from "date-fns";
 import { auth } from "@/auth";
 import { DeletePostButton } from "@/components/DeletePostButton";
+import { SubmitForReviewButton } from "@/components/SubmitForReviewButton";
 
 interface Post {
   id: string;
@@ -38,6 +39,21 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
       error = "Post not found";
     } else {
       post = result as Post;
+      
+      // Check permissions
+      const isAuthor = session?.user?.id === post.author_id;
+      const isAdmin = session?.user?.role === "ADMIN";
+      const isReviewer = session?.user?.role === "REVIEWER";
+      const isPublished = post.status === "PUBLISHED";
+      
+      // Allow viewing if:
+      // - Post is published (anyone can see)
+      // - User is the author (can see own posts)
+      // - User is admin or reviewer (can see all posts)
+      if (!isPublished && !isAuthor && !isAdmin && !isReviewer) {
+        error = "You don't have permission to view this post";
+        post = null;
+      }
     }
   } catch (err) {
     error = "Failed to load post";
@@ -98,6 +114,10 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
                   </Link>
                   <DeletePostButton postId={post.id} />
                 </div>
+              )}
+              
+              {post.status === "DRAFT" && session?.user?.id === post.author_id && (
+                <SubmitForReviewButton postId={post.id} />
               )}
             </div>
 

@@ -16,7 +16,7 @@ export const users = pgTable("users", {
 
 // Categories Table
 export const categories = pgTable("categories", {
-  id: integer("id").primaryKey(),
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
   name: varchar("name", { length: 100 }).notNull().unique(),
   slug: varchar("slug", { length: 100 }).notNull().unique(),
 });
