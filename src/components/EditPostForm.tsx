@@ -12,6 +12,7 @@ interface Post {
   id: string;
   title: string;
   content: string;
+  slug: string;
   category_id?: number;
   status?: string;
 }
@@ -19,6 +20,8 @@ interface Post {
 export function EditPostForm({ post }: { post: Post }) {
   const router = useRouter();
   const [title, setTitle] = useState(post.title);
+  const [slug, setSlug] = useState(post.slug);
+  const [slugTouched, setSlugTouched] = useState(false);
   const [content, setContent] = useState(post.content);
   const [categoryId, setCategoryId] = useState<string>(post.category_id?.toString() || "");
   const [cats, setCats] = useState<CategoryDTO[]>([]);
@@ -43,6 +46,19 @@ export function EditPostForm({ post }: { post: Post }) {
 
     fetchCategories();
   }, []);
+
+  // Auto-generate slug from title on title change (only if user hasn't manually edited slug)
+  useEffect(() => {
+    if (title && !slugTouched && title !== post.title) {
+      const generated = title
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
+      setSlug(generated);
+    }
+  }, [title, slugTouched, post.title]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -104,13 +120,18 @@ export function EditPostForm({ post }: { post: Post }) {
         throw new Error("Category is required");
       }
 
+      if (!slug.trim()) {
+        throw new Error("URL slug is required");
+      }
+
       await updatePost(post.id, {
         title,
+        slug,
         content,
         categoryId: parseInt(categoryId),
       });
 
-      router.push(`/posts/${post.id}`);
+      router.push(`/posts/${slug}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update post");
     } finally {
@@ -146,6 +167,25 @@ export function EditPostForm({ post }: { post: Post }) {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
           />
+        </div>
+
+        <div>
+          <label htmlFor="slug" className="block text-sm font-medium text-gray-700 mb-2">
+            URL Slug *
+          </label>
+          <input
+            id="slug"
+            type="text"
+            value={slug}
+            onChange={(e) => {
+              setSlug(e.target.value.toLowerCase().replace(/\s+/g, "-"));
+              setSlugTouched(true);
+            }}
+            placeholder="auto-generated from title"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            required
+          />
+          <p className="text-xs text-gray-500 mt-1">URL will be: /posts/{slug || "your-slug"}</p>
         </div>
 
         <div>
@@ -211,7 +251,7 @@ export function EditPostForm({ post }: { post: Post }) {
           <Button type="submit" disabled={saving} className="flex-1">
             {saving ? "Saving..." : "Save Changes"}
           </Button>
-          <Link href={`/posts/${post.id}`} className="flex-1">
+          <Link href={`/posts/${post.slug}`} className="flex-1">
             <Button type="button" variant="outline" className="w-full">
               Cancel
             </Button>

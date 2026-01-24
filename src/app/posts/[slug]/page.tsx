@@ -1,4 +1,4 @@
-"use server";
+export const dynamic = "force-dynamic";
 
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
@@ -23,20 +23,38 @@ interface Post {
   updated_at: Date;
 }
 
-export default async function PostPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const session = await auth();
 
   let post: Post | null = null;
   let error: string | null = null;
 
   try {
-    const result = await db.query.posts.findFirst({
-      where: eq(posts.id, id),
+    console.log("=== PostPage Debug ===");
+    console.log("Session object:", JSON.stringify(session, null, 2));
+    console.log("Session user:", session?.user);
+    console.log("Session user id:", session?.user?.id);
+    console.log("Session user email:", session?.user?.email);
+    console.log("Looking for post with slug or id:", slug);
+    
+    // Try to find by slug first, then by id (in case it's an old UUID link)
+    let result = await db.query.posts.findFirst({
+      where: eq(posts.slug, slug),
     });
+
+    // If not found by slug, try by id (UUID)
+    if (!result && slug.includes('-') && slug.length === 36) {
+      result = await db.query.posts.findFirst({
+        where: eq(posts.id, slug),
+      });
+    }
+
+    console.log("Query result:", result);
 
     if (!result) {
       error = "Post not found";
+      console.log("Post not found for slug or id:", slug);
     } else {
       post = result as Post;
       
@@ -45,6 +63,17 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
       const isAdmin = session?.user?.role === "ADMIN";
       const isReviewer = session?.user?.role === "REVIEWER";
       const isPublished = post.status === "PUBLISHED";
+      
+      console.log("Permission check:", {
+        postStatus: post.status,
+        isPublished,
+        userId: session?.user?.id,
+        postAuthor: post.author_id,
+        isAuthor,
+        userRole: session?.user?.role,
+        isAdmin,
+        isReviewer,
+      });
       
       // Allow viewing if:
       // - Post is published (anyone can see)
@@ -106,7 +135,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
 
               {canEdit && (
                 <div className="flex gap-2">
-                  <Link href={`/posts/${post.id}/edit`}>
+                  <Link href={`/posts/${post.slug}/edit`}>
                     <Button variant="outline" size="sm">
                       <Edit2 className="h-4 w-4 mr-2" />
                       Edit

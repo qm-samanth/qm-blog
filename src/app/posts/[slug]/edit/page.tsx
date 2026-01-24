@@ -21,8 +21,8 @@ interface Post {
   updated_at: Date;
 }
 
-export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default async function EditPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const session = await auth();
 
   if (!session?.user) {
@@ -30,22 +30,30 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
   }
 
   console.log("Edit page - Session user:", session.user);
-  console.log("Edit page - Post ID:", id);
+  console.log("Edit page - Post slug:", slug);
 
   let post: Post | null = null;
   let error: string | null = null;
 
   try {
     const result = await db.query.posts.findFirst({
-      where: eq(posts.id, id),
+      where: eq(posts.slug, slug),
     });
 
-    console.log("Edit page - Query result:", result);
+    // If not found by slug, try by id (UUID)
+    let foundPost = result;
+    if (!foundPost && slug.includes('-') && slug.length === 36) {
+      foundPost = await db.query.posts.findFirst({
+        where: eq(posts.id, slug),
+      });
+    }
 
-    if (!result) {
+    console.log("Edit page - Query result:", foundPost);
+
+    if (!foundPost) {
       error = "Post not found";
     } else {
-      post = result as Post;
+      post = foundPost as Post;
 
       // Check authorization - fix: session.user.id should work
       if (session?.user?.id !== post.author_id && session?.user?.role !== "ADMIN") {
@@ -84,7 +92,7 @@ export default async function EditPostPage({ params }: { params: Promise<{ id: s
       <Navbar />
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-3xl">
-          <Link href={`/posts/${post.id}`} className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6">
+          <Link href={`/posts/${post.slug}`} className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6">
             <ArrowLeft className="h-4 w-4" />
             Back to Post
           </Link>

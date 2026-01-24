@@ -78,18 +78,22 @@ export const config = {
   ],
   callbacks: {
     async jwt({ token, user }) {
+      console.log("JWT Callback:", { token, user });
       if (user) {
         token.id = user.id;
         token.role = user.role;
         token.email = user.email;
+        console.log("JWT Updated token:", { id: token.id, role: token.role, email: token.email });
       }
       return token;
     },
     async session({ session, token }): Promise<Session> {
+      console.log("Session Callback:", { session, token });
       if (session.user) {
-        session.user.id = token.id;
-        session.user.role = token.role;
-        session.user.email = token.email;
+        session.user.id = token.id as string;
+        session.user.role = token.role as UserRole;
+        session.user.email = token.email as string;
+        console.log("Session Updated user:", { id: session.user.id, role: session.user.role, email: session.user.email });
       }
       return session;
     },

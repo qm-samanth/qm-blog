@@ -14,6 +14,8 @@ export default function CreatePostPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [slugTouched, setSlugTouched] = useState(false);
   const [content, setContent] = useState("");
   const [categoryId, setCategoryId] = useState<string>("");
   const [cats, setCats] = useState<CategoryDTO[]>([]);
@@ -42,6 +44,19 @@ export default function CreatePostPage() {
 
     fetchCategories();
   }, []);
+
+  // Auto-generate slug from title on title change (only if user hasn't manually edited slug)
+  useEffect(() => {
+    if (title && !slugTouched) {
+      const generated = title
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
+      setSlug(generated);
+    }
+  }, [title, slugTouched]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -103,13 +118,18 @@ export default function CreatePostPage() {
         throw new Error("Category is required");
       }
 
+      if (!slug.trim()) {
+        throw new Error("URL slug is required");
+      }
+
       const newPost = await createPost({
         title,
+        slug,
         content,
         categoryId: parseInt(categoryId),
       });
 
-      router.push(`/posts/${newPost.id}`);
+      router.push(`/posts/${newPost.slug}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create post");
     } finally {
@@ -150,6 +170,25 @@ export default function CreatePostPage() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
+              </div>
+
+              <div>
+                <label htmlFor="slug" className="block text-sm font-medium text-gray-700 mb-2">
+                  URL Slug *
+                </label>
+                <input
+                  id="slug"
+                  type="text"
+                  value={slug}
+                  onChange={(e) => {
+                    setSlug(e.target.value.toLowerCase().replace(/\s+/g, "-"));
+                    setSlugTouched(true);
+                  }}
+                  placeholder="auto-generated from title"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1">URL will be: /posts/{slug || "your-slug"}</p>
               </div>
 
               <div>

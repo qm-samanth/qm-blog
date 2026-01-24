@@ -9,8 +9,9 @@ import type { PostStatus } from "@/types";
 
 interface CreatePostInput {
   title: string;
+  slug: string;
   content: string;
-  categoryId?: number;
+  categoryId: number;
 }
 
 export interface CategoryDTO {
@@ -43,6 +44,7 @@ export async function getReviewers() {
 
 interface UpdatePostInput {
   title?: string;
+  slug?: string;
   content?: string;
   categoryId?: number;
   status?: PostStatus;
@@ -60,21 +62,23 @@ export async function createPost(input: CreatePostInput) {
   }
 
   try {
-    // Generate slug from title
-    const slug = input.title
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/-+/g, "-");
+    // Check if slug already exists
+    const existingPost = await db.query.posts.findFirst({
+      where: eq(posts.slug, input.slug),
+    });
+
+    if (existingPost) {
+      throw new Error(`Slug "${input.slug}" is already in use. Please choose a different slug.`);
+    }
 
     const now = new Date();
     const newPost = await db.insert(posts).values({
       id: uuidv4(),
       title: input.title,
-      slug: slug,
+      slug: input.slug,
       content: input.content,
       author_id: session.user.id,
-      category_id: input.categoryId || null,
+      category_id: input.categoryId,
       status: "DRAFT",
       created_at: now,
       updated_at: now,
@@ -83,6 +87,9 @@ export async function createPost(input: CreatePostInput) {
     return newPost[0];
   } catch (error) {
     console.error("Error creating post:", error);
+    if (error instanceof Error && error.message.includes("Slug")) {
+      throw error;
+    }
     throw new Error("Failed to create post");
   }
 }
@@ -130,11 +137,23 @@ export async function updatePost(postId: string, input: UpdatePostInput) {
       throw new Error("Unauthorized: You can only update your own posts");
     }
 
+    // Check if new slug already exists (if slug is being changed)
+    if (input.slug && input.slug !== post.slug) {
+      const existingPost = await db.query.posts.findFirst({
+        where: eq(posts.slug, input.slug),
+      });
+
+      if (existingPost) {
+        throw new Error(`Slug "${input.slug}" is already in use. Please choose a different slug.`);
+      }
+    }
+
     // Update post
     const updatedPost = await db
       .update(posts)
       .set({
         ...(input.title && { title: input.title }),
+        ...(input.slug && { slug: input.slug }),
         ...(input.content && { content: input.content }),
         ...(input.categoryId !== undefined && { category_id: input.categoryId }),
         // If editing a published post, revert to DRAFT for review

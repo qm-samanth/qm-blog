@@ -62,7 +62,7 @@ export function PostCard({
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
-          <Link href={`/posts/${post.id}`}>
+          <Link href={`/posts/${post.slug}`}>
             <h2 className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors">
               {post.title}
             </h2>
@@ -101,7 +101,7 @@ export function PostCard({
 
       {/* Action Buttons - Conditional Rendering */}
       <div className="mt-4 flex items-center gap-2">
-        <Link href={`/posts/${post.id}`}>
+        <Link href={`/posts/${post.slug}`}>
           <Button variant="outline" size="sm" className="gap-2">
             <Eye className="h-4 w-4" />
             View
@@ -109,7 +109,7 @@ export function PostCard({
         </Link>
 
         {canEdit && (
-          <Link href={`/posts/${post.id}/edit`}>
+          <Link href={`/posts/${post.slug}/edit`}>
             <Button variant="outline" size="sm" className="gap-2">
               <Edit className="h-4 w-4" />
               Edit
