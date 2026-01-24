@@ -192,6 +192,29 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               </div>
             )}
 
+            {(post.status === "REJECTED" || post.status === "PUBLISHED") && post.reviewer_comments && (
+              <div className={`my-6 p-4 rounded-lg border-l-4 ${
+                post.status === "PUBLISHED"
+                  ? "bg-green-50 border-green-500"
+                  : "bg-red-50 border-red-500"
+              }`}>
+                <h3 className={`font-bold mb-2 ${
+                  post.status === "PUBLISHED"
+                    ? "text-green-800"
+                    : "text-red-800"
+                }`}>
+                  {post.status === "PUBLISHED" ? "✓ Approval Feedback" : "✗ Rejection Feedback"}
+                </h3>
+                <p className={`text-sm ${
+                  post.status === "PUBLISHED"
+                    ? "text-green-700"
+                    : "text-red-700"
+                } whitespace-pre-wrap`}>
+                  {post.reviewer_comments}
+                </p>
+              </div>
+            )}
+
             <div className="prose prose-sm md:prose-base lg:prose-lg max-w-none 
               prose-h1:text-4xl prose-h1:font-bold prose-h1:my-6 prose-h1:text-gray-900
               prose-h2:text-3xl prose-h2:font-bold prose-h2:my-4 prose-h2:text-gray-900

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { PostCard } from "@/components/PostCard";
+import { ReviewPostCard } from "@/components/ReviewPostCard";
 import { getReviewQueue } from "@/lib/posts";
 import { updatePost } from "@/lib/actions/posts";
 import type { Post, UserRole } from "@/types";
@@ -46,27 +47,37 @@ export default function ReviewPage() {
     }
   }, [session]);
 
-  const handleApprove = async (postId: string) => {
+  const handleApprove = async (postId: string, comments: string) => {
     setActionLoading(postId);
     try {
-      await updatePost(postId, { status: "PUBLISHED" });
-      setPosts(posts.map((p) => 
-        p.id === postId ? { ...p, status: "PUBLISHED" } : p
-      ));
+      const response = await fetch(`/api/posts/${postId}/approve`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ comments }),
+      });
+
+      if (!response.ok) throw new Error("Failed to approve post");
+      
+      setPosts(posts.filter((p) => p.id !== postId));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to publish post");
+      setError(err instanceof Error ? err.message : "Failed to approve post");
     } finally {
       setActionLoading(null);
     }
   };
 
-  const handleReject = async (postId: string) => {
+  const handleReject = async (postId: string, comments: string) => {
     setActionLoading(postId);
     try {
-      await updatePost(postId, { status: "REJECTED" });
-      setPosts(posts.map((p) => 
-        p.id === postId ? { ...p, status: "REJECTED" } : p
-      ));
+      const response = await fetch(`/api/posts/${postId}/reject`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ comments }),
+      });
+
+      if (!response.ok) throw new Error("Failed to reject post");
+      
+      setPosts(posts.filter((p) => p.id !== postId));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to reject post");
     } finally {
@@ -112,45 +123,17 @@ export default function ReviewPage() {
         ) : (
           <div className="space-y-6">
             {pendingPosts.map((post) => (
-              <div
+              <ReviewPostCard
                 key={post.id}
-                className="bg-white rounded-lg border border-gray-200 p-6 space-y-4"
-              >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h2 className="text-xl font-semibold text-gray-900">
-                      {post.title}
-                    </h2>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Post ID: {post.id.substring(0, 8)}...
-                    </p>
-                  </div>
-                  <Badge className="bg-yellow-100 text-yellow-800">PENDING</Badge>
-                </div>
-
-                <p className="text-gray-700 line-clamp-3">
-                  {post.content.substring(0, 200)}...
-                </p>
-
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => handleApprove(post.id)}
-                    disabled={actionLoading === post.id}
-                    className="gap-2 bg-green-600 hover:bg-green-700"
-                  >
-                    <CheckCircle className="h-4 w-4" />
-                    Approve
-                  </Button>
-                  <Button
-                    onClick={() => handleReject(post.id)}
-                    disabled={actionLoading === post.id}
-                    className="gap-2 bg-red-600 hover:bg-red-700"
-                  >
-                    <XCircle className="h-4 w-4" />
-                    Reject
-                  </Button>
-                </div>
-              </div>
+                postId={post.id}
+                slug={post.slug}
+                title={post.title}
+                content={post.content}
+                authorEmail={post.author_id || "Unknown"}
+                createdAt={new Date(post.created_at)}
+                onApprove={handleApprove}
+                onReject={handleReject}
+              />
             ))}
           </div>
         )}

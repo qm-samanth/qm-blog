@@ -41,6 +41,12 @@ export function Navbar() {
                           Tags
                         </Button>
                       </Link>
+                      <Link href="/review">
+                        <Button variant="outline" size="sm" className="gap-2">
+                          <LayoutDashboard className="h-4 w-4" />
+                          Review Queue
+                        </Button>
+                      </Link>
                     </>
                   )}
                   {session.user.role === "REVIEWER" && (
