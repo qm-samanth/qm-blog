@@ -177,7 +177,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                 </div>
               )}
               
-              {post.status === "DRAFT" && session?.user?.id === post.author_id && (
+              {(post.status === "DRAFT" || post.status === "REJECTED") && session?.user?.id === post.author_id && (
                 <SubmitForReviewButton postId={post.id} />
               )}
             </div>
