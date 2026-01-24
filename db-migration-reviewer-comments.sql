@@ -10,3 +10,4 @@ CREATE INDEX IF NOT EXISTS idx_posts_status_reviewer
     (status ASC NULLS LAST, reviewer_id ASC NULLS LAST)
     WITH (fillfactor=100, deduplicate_items=True)
     TABLESPACE pg_default;
+    
