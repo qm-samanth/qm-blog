@@ -7,6 +7,8 @@ import { uploadImage } from "@/lib/actions/images";
 import { Button } from "@/components/ui/button";
 import { FeaturedImageSelector } from "@/components/FeaturedImageSelector";
 import { TagSelector } from "@/components/TagSelector";
+import { RichTextEditor } from "@/components/RichTextEditor";
+import { PreviewModal } from "@/components/PreviewModal";
 import Link from "next/link";
 import { Check } from "lucide-react";
 
@@ -28,6 +30,7 @@ export function EditPostForm({ post }: { post: Post }) {
   const [content, setContent] = useState(post.content);
   const [categoryId, setCategoryId] = useState<string>(post.category_id?.toString() || "");
   const [featuredImageUrl, setFeaturedImageUrl] = useState<string | undefined>(post.featured_image_url);
+  const [showPreview, setShowPreview] = useState(false);
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const [cats, setCats] = useState<CategoryDTO[]>([]);
   const [saving, setSaving] = useState(false);
@@ -241,17 +244,22 @@ export function EditPostForm({ post }: { post: Post }) {
         />
 
         <div>
-          <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
-            Content *
-          </label>
-          <textarea
-            id="content"
+          <div className="flex justify-between items-center mb-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Content *
+            </label>
+            <button
+              type="button"
+              onClick={() => setShowPreview(true)}
+              className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            >
+              Preview
+            </button>
+          </div>
+          <RichTextEditor
             value={content}
-            onChange={(e) => setContent(e.target.value)}
+            onChange={setContent}
             placeholder="Write your post content here..."
-            rows={12}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            required
           />
         </div>
 
@@ -289,6 +297,13 @@ export function EditPostForm({ post }: { post: Post }) {
           </Link>
         </div>
       </form>
+
+      <PreviewModal
+        isOpen={showPreview}
+        onClose={() => setShowPreview(false)}
+        content={content}
+        title={title}
+      />
     </>
   );
 }

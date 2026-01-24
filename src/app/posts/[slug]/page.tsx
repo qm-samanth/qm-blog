@@ -12,6 +12,7 @@ import { auth } from "@/auth";
 import { DeletePostButton } from "@/components/DeletePostButton";
 import { SubmitForReviewButton } from "@/components/SubmitForReviewButton";
 import { PostTagsDisplay } from "@/components/PostTagsDisplay";
+import { decodeHTML } from "@/lib/utils/html";
 
 interface Post {
   id: string;
@@ -131,6 +132,9 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 
   const canEdit = session?.user?.id === post.author_id || session?.user?.role === "ADMIN";
 
+  // Decode HTML entities if the content is escaped
+  const displayContent = decodeHTML(post.content);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -188,10 +192,23 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               </div>
             )}
 
-            <div className="prose prose-sm max-w-none">
-              <div className="bg-gray-50 p-6 rounded-lg whitespace-pre-wrap text-gray-800">
-                {post.content}
-              </div>
+            <div className="prose prose-sm md:prose-base lg:prose-lg max-w-none 
+              prose-h1:text-4xl prose-h1:font-bold prose-h1:my-6 prose-h1:text-gray-900
+              prose-h2:text-3xl prose-h2:font-bold prose-h2:my-4 prose-h2:text-gray-900
+              prose-h3:text-2xl prose-h3:font-bold prose-h3:my-3 prose-h3:text-gray-900
+              prose-p:my-4 prose-p:leading-7 prose-p:text-gray-800
+              prose-ul:list-disc prose-ul:list-inside prose-ul:my-4 prose-ul:space-y-2 prose-ul:text-gray-800
+              prose-ol:list-decimal prose-ol:list-inside prose-ol:my-4 prose-ol:space-y-2 prose-ol:text-gray-800
+              prose-li:text-gray-800
+              prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:pl-4 prose-blockquote:my-4 prose-blockquote:italic prose-blockquote:text-gray-700 prose-blockquote:bg-gray-50
+              prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm prose-code:font-mono prose-code:text-red-600
+              prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:my-4
+              prose-a:text-blue-600 prose-a:hover:text-blue-800 prose-a:underline
+              prose-img:my-4 prose-img:rounded-lg prose-img:max-w-full prose-img:h-auto
+              prose-strong:font-bold prose-strong:text-gray-900
+              prose-em:italic
+            ">
+              <div dangerouslySetInnerHTML={{ __html: displayContent }} />
             </div>
           </div>
         </div>

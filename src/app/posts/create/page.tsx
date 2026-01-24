@@ -7,6 +7,8 @@ import { createPost, getCategories, type CategoryDTO } from "@/lib/actions/posts
 import { Button } from "@/components/ui/button";
 import { FeaturedImageSelector } from "@/components/FeaturedImageSelector";
 import { TagSelector } from "@/components/TagSelector";
+import { RichTextEditor } from "@/components/RichTextEditor";
+import { PreviewModal } from "@/components/PreviewModal";
 import { Navbar } from "@/components/Navbar";
 import { ArrowLeft, Copy, Check } from "lucide-react";
 import Link from "next/link";
@@ -28,6 +30,7 @@ export default function CreatePostPage() {
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   if (status === "unauthenticated") {
     router.push("/auth/signin");
@@ -244,17 +247,22 @@ export default function CreatePostPage() {
               />
 
               <div>
-                <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
-                  Content *
-                </label>
-                <textarea
-                  id="content"
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Content *
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowPreview(true)}
+                    className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                  >
+                    Preview
+                  </button>
+                </div>
+                <RichTextEditor
                   value={content}
-                  onChange={(e) => setContent(e.target.value)}
+                  onChange={setContent}
                   placeholder="Write your post content here..."
-                  rows={12}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
                 />
               </div>
 
@@ -292,6 +300,13 @@ export default function CreatePostPage() {
                 </Link>
               </div>
             </form>
+
+            <PreviewModal
+              isOpen={showPreview}
+              onClose={() => setShowPreview(false)}
+              content={content}
+              title={title || "Untitled Post"}
+            />
 
             <div className="mt-6 p-4 bg-blue-50 rounded-lg">
               <p className="text-sm text-gray-600">
