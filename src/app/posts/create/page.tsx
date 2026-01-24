@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { createPost, getCategories, type CategoryDTO } from "@/lib/actions/posts";
 import { Button } from "@/components/ui/button";
 import { FeaturedImageSelector } from "@/components/FeaturedImageSelector";
+import { TagSelector } from "@/components/TagSelector";
 import { Navbar } from "@/components/Navbar";
 import { ArrowLeft, Copy, Check } from "lucide-react";
 import Link from "next/link";
@@ -20,6 +21,7 @@ export default function CreatePostPage() {
   const [content, setContent] = useState("");
   const [categoryId, setCategoryId] = useState<string>("");
   const [featuredImageUrl, setFeaturedImageUrl] = useState<string | undefined>();
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const [cats, setCats] = useState<CategoryDTO[]>([]);
   const [loading, setLoading] = useState(false);
   const [catsLoading, setCatsLoading] = useState(true);
@@ -128,12 +130,23 @@ export default function CreatePostPage() {
         throw new Error("Featured image URL is required");
       }
 
+      if (selectedTagIds.length === 0) {
+        throw new Error("Please select at least one tag");
+      }
+
       const newPost = await createPost({
         title,
         slug,
         content,
         categoryId: parseInt(categoryId),
         featuredImageUrl,
+      });
+
+      // Save tags
+      await fetch(`/api/posts/${newPost.id}/tags`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tagIds: selectedTagIds }),
       });
 
       router.push(`/posts/${newPost.slug}`);
@@ -225,6 +238,10 @@ export default function CreatePostPage() {
                   onChange={setFeaturedImageUrl}
                 />
               )}
+
+              <TagSelector
+                onTagsChange={setSelectedTagIds}
+              />
 
               <div>
                 <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">

@@ -3,7 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { LogOut, Settings, LayoutDashboard, Image as ImageIcon } from "lucide-react";
+import { LogOut, Settings, LayoutDashboard, Image as ImageIcon, Tag } from "lucide-react";
 
 export function Navbar() {
   const { data: session } = useSession();
@@ -28,12 +28,20 @@ export function Navbar() {
               {(session.user.role === "ADMIN" || session.user.role === "REVIEWER") && (
                 <>
                   {session.user.role === "ADMIN" && (
-                    <Link href="/admin">
-                      <Button variant="outline" size="sm" className="gap-2">
-                        <Settings className="h-4 w-4" />
-                        Admin
-                      </Button>
-                    </Link>
+                    <>
+                      <Link href="/admin">
+                        <Button variant="outline" size="sm" className="gap-2">
+                          <Settings className="h-4 w-4" />
+                          Admin
+                        </Button>
+                      </Link>
+                      <Link href="/admin/tags">
+                        <Button variant="outline" size="sm" className="gap-2">
+                          <Tag className="h-4 w-4" />
+                          Tags
+                        </Button>
+                      </Link>
+                    </>
                   )}
                   {session.user.role === "REVIEWER" && (
                     <Link href="/review">

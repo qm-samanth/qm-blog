@@ -6,6 +6,7 @@ import { updatePost, getCategories, type CategoryDTO } from "@/lib/actions/posts
 import { uploadImage } from "@/lib/actions/images";
 import { Button } from "@/components/ui/button";
 import { FeaturedImageSelector } from "@/components/FeaturedImageSelector";
+import { TagSelector } from "@/components/TagSelector";
 import Link from "next/link";
 import { Check } from "lucide-react";
 
@@ -27,6 +28,7 @@ export function EditPostForm({ post }: { post: Post }) {
   const [content, setContent] = useState(post.content);
   const [categoryId, setCategoryId] = useState<string>(post.category_id?.toString() || "");
   const [featuredImageUrl, setFeaturedImageUrl] = useState<string | undefined>(post.featured_image_url);
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const [cats, setCats] = useState<CategoryDTO[]>([]);
   const [saving, setSaving] = useState(false);
   const [catsLoading, setCatsLoading] = useState(true);
@@ -131,12 +133,23 @@ export function EditPostForm({ post }: { post: Post }) {
         throw new Error("Featured image URL is required");
       }
 
+      if (selectedTagIds.length === 0) {
+        throw new Error("Please select at least one tag");
+      }
+
       await updatePost(post.id, {
         title,
         slug,
         content,
         categoryId: parseInt(categoryId),
         featuredImageUrl,
+      });
+
+      // Save tags
+      await fetch(`/api/posts/${post.id}/tags`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tagIds: selectedTagIds }),
       });
 
       router.push(`/posts/${slug}`);
@@ -220,6 +233,11 @@ export function EditPostForm({ post }: { post: Post }) {
         <FeaturedImageSelector 
           value={featuredImageUrl} 
           onChange={setFeaturedImageUrl}
+        />
+
+        <TagSelector
+          postId={post.id}
+          onTagsChange={setSelectedTagIds}
         />
 
         <div>

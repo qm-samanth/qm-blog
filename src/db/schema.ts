@@ -67,10 +67,37 @@ export const comments = pgTable("comments", {
   updated_at: timestamp("updated_at", { withTimezone: true }),
 });
 
+// Tags Table
+export const tags = pgTable("tags", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  name: varchar("name", { length: 100 }).notNull().unique(),
+  slug: varchar("slug", { length: 100 }).notNull().unique(),
+  created_at: timestamp("created_at", { withTimezone: true }).notNull(),
+  updated_at: timestamp("updated_at", { withTimezone: true }).notNull(),
+});
+
+// Post Tags Junction Table (Many-to-Many)
+export const postTags = pgTable("post_tags", {
+  post_id: uuid("post_id").notNull(),
+  tag_id: integer("tag_id").notNull(),
+}, (table) => ({
+  pk: { primaryKey: [table.post_id, table.tag_id] },
+}));
+
 // Relations
 export const postsRelations = relations(posts, ({ one, many }) => ({
   author: one(users, { fields: [posts.author_id], references: [users.id] }),
   comments: many(comments),
+  tags: many(postTags),
+}));
+
+export const tagsRelations = relations(tags, ({ many }) => ({
+  posts: many(postTags),
+}));
+
+export const postTagsRelations = relations(postTags, ({ one }) => ({
+  post: one(posts, { fields: [postTags.post_id], references: [posts.id] }),
+  tag: one(tags, { fields: [postTags.tag_id], references: [tags.id] }),
 }));
 
 export const commentsRelations = relations(comments, ({ one }) => ({

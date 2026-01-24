@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Edit2 } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/db";
-import { posts } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { posts, postTags, tags } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
 import { format } from "date-fns";
 import { auth } from "@/auth";
 import { DeletePostButton } from "@/components/DeletePostButton";
 import { SubmitForReviewButton } from "@/components/SubmitForReviewButton";
+import { PostTagsDisplay } from "@/components/PostTagsDisplay";
 
 interface Post {
   id: string;
@@ -24,12 +25,19 @@ interface Post {
   updated_at: Date;
 }
 
+interface Tag {
+  id: number;
+  name: string;
+  slug: string;
+}
+
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const session = await auth();
 
   let post: Post | null = null;
   let error: string | null = null;
+  let postTagsList: Tag[] = [];
 
   try {
     console.log("=== PostPage Debug ===");
@@ -58,6 +66,20 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
       console.log("Post not found for slug or id:", slug);
     } else {
       post = result as Post;
+      
+      // Fetch tags for this post
+      const postTagsData = await db
+        .select({
+          id: tags.id,
+          name: tags.name,
+          slug: tags.slug,
+        })
+        .from(postTags)
+        .innerJoin(tags, eq(postTags.tag_id, tags.id))
+        .where(eq(postTags.post_id, post.id));
+      
+      console.log("Post tags fetched:", postTagsData);
+      postTagsList = postTagsData as Tag[];
       
       // Check permissions
       const isAuthor = session?.user?.id === post.author_id;
@@ -132,6 +154,11 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                     {post.status}
                   </span>
                 </div>
+                {postTags.length > 0 && (
+                  <div className="mt-4">
+                    <PostTagsDisplay tags={postTagsList} />
+                  </div>
+                )}
               </div>
 
               {canEdit && (
