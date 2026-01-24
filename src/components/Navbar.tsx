@@ -3,7 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { LogOut, Settings, LayoutDashboard } from "lucide-react";
+import { LogOut, Settings, LayoutDashboard, Image as ImageIcon } from "lucide-react";
 
 export function Navbar() {
   const { data: session } = useSession();
@@ -54,6 +54,13 @@ export function Navbar() {
                   </Button>
                 </Link>
               )}
+
+              <Link href="/image-manager">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <ImageIcon className="h-4 w-4" />
+                  Images
+                </Button>
+              </Link>
 
               <Button
                 variant="outline"

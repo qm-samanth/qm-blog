@@ -12,11 +12,17 @@ const routePermissions: Record<string, UserRole[]> = {
   "/review/*": ["REVIEWER", "ADMIN"],
   "/dashboard": ["USER", "REVIEWER", "ADMIN"],
   "/dashboard/*": ["USER", "REVIEWER", "ADMIN"],
+  "/image-manager": ["USER", "REVIEWER", "ADMIN"],
+  "/image-manager/*": ["USER", "REVIEWER", "ADMIN"],
   "/api/admin": ["ADMIN"],
   "/api/admin/*": ["ADMIN"],
   "/api/review": ["REVIEWER", "ADMIN"],
   "/api/review/*": ["REVIEWER", "ADMIN"],
   "/api/posts": ["USER", "REVIEWER", "ADMIN"],
+  "/api/folders": ["USER", "REVIEWER", "ADMIN"],
+  "/api/folders/*": ["USER", "REVIEWER", "ADMIN"],
+  "/api/images": ["USER", "REVIEWER", "ADMIN"],
+  "/api/images/*": ["USER", "REVIEWER", "ADMIN"],
 };
 
 export async function middleware(request: NextRequest) {

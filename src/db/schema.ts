@@ -21,10 +21,20 @@ export const categories = pgTable("categories", {
   slug: varchar("slug", { length: 100 }).notNull().unique(),
 });
 
+// Folders Table
+export const folders = pgTable("folders", {
+  id: uuid("id").primaryKey(),
+  user_id: uuid("user_id").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  created_at: timestamp("created_at", { withTimezone: true }).notNull(),
+  updated_at: timestamp("updated_at", { withTimezone: true }).notNull(),
+});
+
 // Images Table
 export const images = pgTable("images", {
   id: uuid("id").primaryKey(),
   user_id: uuid("user_id").notNull(),
+  folder_id: uuid("folder_id"),
   cloudinary_public_id: varchar("cloudinary_public_id", { length: 255 }).notNull().unique(),
   cloudinary_url: text("cloudinary_url").notNull(),
   filename: varchar("filename", { length: 255 }).notNull(),
@@ -70,8 +80,20 @@ export const commentsRelations = relations(comments, ({ one }) => ({
 export const usersRelations = relations(users, ({ many }) => ({
   posts: many(posts),
   comments: many(comments),
+  folders: many(folders),
+  images: many(images),
 }));
 
 export const categoriesRelations = relations(categories, ({ many }) => ({
   posts: many(posts),
+}));
+
+export const foldersRelations = relations(folders, ({ one, many }) => ({
+  user: one(users, { fields: [folders.user_id], references: [users.id] }),
+  images: many(images),
+}));
+
+export const imagesRelations = relations(images, ({ one }) => ({
+  user: one(users, { fields: [images.user_id], references: [users.id] }),
+  folder: one(folders, { fields: [images.folder_id], references: [folders.id] }),
 }));
