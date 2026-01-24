@@ -111,6 +111,11 @@ export default function AdminPage() {
                   🏷️ Manage Categories
                 </Button>
               </Link>
+              <Link href="/admin/images" className="block">
+                <Button variant="outline" className="w-full justify-start">
+                  📷 Manage Images
+                </Button>
+              </Link>
               <Link href="/" className="block">
                 <Button variant="outline" className="w-full justify-start">
                   📰 View All Posts

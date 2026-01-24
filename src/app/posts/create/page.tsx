@@ -6,8 +6,9 @@ import { useRouter } from "next/navigation";
 import { createPost, getCategories, type CategoryDTO } from "@/lib/actions/posts";
 import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/Navbar";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Copy, Check } from "lucide-react";
 import Link from "next/link";
+import { uploadImage } from "@/lib/actions/images";
 
 export default function CreatePostPage() {
   const { data: session, status } = useSession();
@@ -19,6 +20,8 @@ export default function CreatePostPage() {
   const [loading, setLoading] = useState(false);
   const [catsLoading, setCatsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
 
   if (status === "unauthenticated") {
     router.push("/auth/signin");
@@ -39,6 +42,52 @@ export default function CreatePostPage() {
 
     fetchCategories();
   }, []);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setError("Please select an image file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Image size must be less than 5MB");
+      return;
+    }
+
+    setUploading(true);
+    setError(null);
+
+    try {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        const base64 = event.target?.result as string;
+        try {
+          const result = await uploadImage({
+            base64,
+            filename: file.name,
+            fileSize: file.size,
+          });
+
+          // Insert markdown syntax into content
+          const imageMarkdown = `![${file.name}](${result.url})`;
+          setContent(content + "\n\n" + imageMarkdown + "\n\n");
+          setCopiedUrl(result.url);
+          setTimeout(() => setCopiedUrl(null), 2000);
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "Upload failed");
+        } finally {
+          setUploading(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to read file");
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,6 +181,29 @@ export default function CreatePostPage() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
+              </div>
+
+              {/* Image Upload Section */}
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                <label className="cursor-pointer flex flex-col items-center gap-2">
+                  <svg className="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  <span className="text-sm text-gray-600">Click to upload an image (will be inserted into content)</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploading}
+                    className="hidden"
+                  />
+                </label>
+                {uploading && <p className="text-center text-sm text-gray-600 mt-2">Uploading...</p>}
+                {copiedUrl && (
+                  <p className="text-center text-sm text-green-600 mt-2 flex items-center justify-center gap-2">
+                    <Check className="h-4 w-4" /> Image inserted into content!
+                  </p>
+                )}
               </div>
 
               <div className="flex gap-4">

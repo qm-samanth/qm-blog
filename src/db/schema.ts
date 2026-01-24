@@ -21,6 +21,17 @@ export const categories = pgTable("categories", {
   slug: varchar("slug", { length: 100 }).notNull().unique(),
 });
 
+// Images Table
+export const images = pgTable("images", {
+  id: uuid("id").primaryKey(),
+  user_id: uuid("user_id").notNull(),
+  cloudinary_public_id: varchar("cloudinary_public_id", { length: 255 }).notNull().unique(),
+  cloudinary_url: text("cloudinary_url").notNull(),
+  filename: varchar("filename", { length: 255 }).notNull(),
+  file_size: integer("file_size"),
+  created_at: timestamp("created_at", { withTimezone: true }).notNull(),
+});
+
 // Posts Table
 export const posts = pgTable("posts", {
   id: uuid("id").primaryKey(),
