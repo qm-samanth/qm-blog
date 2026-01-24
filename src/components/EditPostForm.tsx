@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { updatePost, getCategories, type CategoryDTO } from "@/lib/actions/posts";
 import { uploadImage } from "@/lib/actions/images";
 import { Button } from "@/components/ui/button";
+import { FeaturedImageSelector } from "@/components/FeaturedImageSelector";
 import Link from "next/link";
 import { Check } from "lucide-react";
 
@@ -15,6 +16,7 @@ interface Post {
   slug: string;
   category_id?: number;
   status?: string;
+  featured_image_url?: string;
 }
 
 export function EditPostForm({ post }: { post: Post }) {
@@ -24,6 +26,7 @@ export function EditPostForm({ post }: { post: Post }) {
   const [slugTouched, setSlugTouched] = useState(false);
   const [content, setContent] = useState(post.content);
   const [categoryId, setCategoryId] = useState<string>(post.category_id?.toString() || "");
+  const [featuredImageUrl, setFeaturedImageUrl] = useState<string | undefined>(post.featured_image_url);
   const [cats, setCats] = useState<CategoryDTO[]>([]);
   const [saving, setSaving] = useState(false);
   const [catsLoading, setCatsLoading] = useState(true);
@@ -124,11 +127,16 @@ export function EditPostForm({ post }: { post: Post }) {
         throw new Error("URL slug is required");
       }
 
+      if (!featuredImageUrl?.trim()) {
+        throw new Error("Featured image URL is required");
+      }
+
       await updatePost(post.id, {
         title,
         slug,
         content,
         categoryId: parseInt(categoryId),
+        featuredImageUrl,
       });
 
       router.push(`/posts/${slug}`);
@@ -208,6 +216,11 @@ export function EditPostForm({ post }: { post: Post }) {
             ))}
           </select>
         </div>
+
+        <FeaturedImageSelector 
+          value={featuredImageUrl} 
+          onChange={setFeaturedImageUrl}
+        />
 
         <div>
           <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">

@@ -19,6 +19,7 @@ interface Post {
   slug: string;
   author_id: string;
   status: string;
+  featured_image_url?: string;
   created_at: Date;
   updated_at: Date;
 }
@@ -149,6 +150,16 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                 <SubmitForReviewButton postId={post.id} />
               )}
             </div>
+
+            {post.featured_image_url && (
+              <div className="my-8">
+                <img 
+                  src={post.featured_image_url} 
+                  alt="Featured image" 
+                  className="w-full h-96 object-cover rounded-lg"
+                />
+              </div>
+            )}
 
             <div className="prose prose-sm max-w-none">
               <div className="bg-gray-50 p-6 rounded-lg whitespace-pre-wrap text-gray-800">

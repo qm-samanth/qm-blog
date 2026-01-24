@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { createPost, getCategories, type CategoryDTO } from "@/lib/actions/posts";
 import { Button } from "@/components/ui/button";
+import { FeaturedImageSelector } from "@/components/FeaturedImageSelector";
 import { Navbar } from "@/components/Navbar";
 import { ArrowLeft, Copy, Check } from "lucide-react";
 import Link from "next/link";
@@ -18,6 +19,7 @@ export default function CreatePostPage() {
   const [slugTouched, setSlugTouched] = useState(false);
   const [content, setContent] = useState("");
   const [categoryId, setCategoryId] = useState<string>("");
+  const [featuredImageUrl, setFeaturedImageUrl] = useState<string | undefined>();
   const [cats, setCats] = useState<CategoryDTO[]>([]);
   const [loading, setLoading] = useState(false);
   const [catsLoading, setCatsLoading] = useState(true);
@@ -122,11 +124,16 @@ export default function CreatePostPage() {
         throw new Error("URL slug is required");
       }
 
+      if (!featuredImageUrl?.trim()) {
+        throw new Error("Featured image URL is required");
+      }
+
       const newPost = await createPost({
         title,
         slug,
         content,
         categoryId: parseInt(categoryId),
+        featuredImageUrl,
       });
 
       router.push(`/posts/${newPost.slug}`);
@@ -211,6 +218,13 @@ export default function CreatePostPage() {
                   ))}
                 </select>
               </div>
+
+              {session?.user?.id && (
+                <FeaturedImageSelector 
+                  value={featuredImageUrl} 
+                  onChange={setFeaturedImageUrl}
+                />
+              )}
 
               <div>
                 <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">

@@ -50,6 +50,7 @@ export const posts = pgTable("posts", {
   content: text("content").notNull(),
   author_id: uuid("author_id").notNull(),
   category_id: integer("category_id"),
+  featured_image_url: text("featured_image_url"),
   status: postStatusEnum("status").notNull().default("DRAFT"),
   reviewer_id: uuid("reviewer_id"),
   created_at: timestamp("created_at", { withTimezone: true }).notNull(),

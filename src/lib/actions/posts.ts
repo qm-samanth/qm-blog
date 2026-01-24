@@ -12,6 +12,7 @@ interface CreatePostInput {
   slug: string;
   content: string;
   categoryId: number;
+  featuredImageUrl?: string;
 }
 
 export interface CategoryDTO {
@@ -47,6 +48,7 @@ interface UpdatePostInput {
   slug?: string;
   content?: string;
   categoryId?: number;
+  featuredImageUrl?: string;
   status?: PostStatus;
 }
 
@@ -79,6 +81,7 @@ export async function createPost(input: CreatePostInput) {
       content: input.content,
       author_id: session.user.id,
       category_id: input.categoryId,
+      featured_image_url: input.featuredImageUrl,
       status: "DRAFT",
       created_at: now,
       updated_at: now,
@@ -156,6 +159,7 @@ export async function updatePost(postId: string, input: UpdatePostInput) {
         ...(input.slug && { slug: input.slug }),
         ...(input.content && { content: input.content }),
         ...(input.categoryId !== undefined && { category_id: input.categoryId }),
+        ...(input.featuredImageUrl !== undefined && { featured_image_url: input.featuredImageUrl }),
         // If editing a published post, revert to DRAFT for review
         ...(post.status === "PUBLISHED" && !input.status && { status: "DRAFT" }),
         ...(input.status && { status: input.status }),
