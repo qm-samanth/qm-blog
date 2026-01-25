@@ -16,8 +16,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { deletePost } from "@/lib/actions/posts";
+import { PostTagsDisplay } from "@/components/PostTagsDisplay";
 
 interface PostCardProps {
   post: Post;
@@ -58,6 +59,12 @@ function getPlainTextPreview(html: string, maxLength: number = 200): string {
   return plainText;
 }
 
+interface Tag {
+  id: number;
+  name: string;
+  slug: string;
+}
+
 export function PostCard({
   post,
   userRole,
@@ -65,6 +72,28 @@ export function PostCard({
   onDelete,
 }: PostCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [tagsLoading, setTagsLoading] = useState(true);
+
+  // Fetch tags for this post
+  useEffect(() => {
+    async function fetchTags() {
+      try {
+        setTagsLoading(true);
+        const response = await fetch(`/api/posts/${post.id}/tags`);
+        if (response.ok) {
+          const data = await response.json();
+          setTags(data);
+        }
+      } catch (error) {
+        console.error("Error fetching tags:", error);
+      } finally {
+        setTagsLoading(false);
+      }
+    }
+
+    fetchTags();
+  }, [post.id]);
 
   // Determine if user can edit/delete this post
   const canEdit = userRole === "ADMIN" || (userRole === "USER" && post.author_id === userId);
@@ -82,8 +111,10 @@ export function PostCard({
     }
   };
 
+  const preview = getPlainTextPreview(post.content, 180);
+
   return (
-    <article className="rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+    <article className="rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-lg transition-shadow overflow-hidden">
       {/* Image and Title Section */}
       {post.featured_image_url ? (
         <div className="relative h-64 bg-gray-200 overflow-hidden group">
@@ -93,72 +124,90 @@ export function PostCard({
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
           {/* Title Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end p-6">
             <Link href={`/posts/${post.slug}`}>
-              <h2 className="text-xl font-semibold text-white hover:text-blue-200 transition-colors line-clamp-2">
+              <h2 className="text-2xl font-bold text-white hover:text-blue-200 transition-colors line-clamp-3">
                 {post.title}
               </h2>
             </Link>
           </div>
           {/* Status Badge */}
-          <div className="absolute top-3 right-3">
-            <Badge className={statusColors[post.status]}>
+          <div className="absolute top-4 right-4">
+            <Badge className={`${statusColors[post.status]} font-semibold`}>
               {post.status}
             </Badge>
           </div>
         </div>
       ) : (
-        <div className="h-64 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center relative">
-          <div className="text-center">
+        <div className="h-48 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center relative border-b border-gray-200">
+          <div className="text-center px-6">
             <Link href={`/posts/${post.slug}`}>
-              <h2 className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors px-4">
+              <h2 className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors">
                 {post.title}
               </h2>
             </Link>
           </div>
           {/* Status Badge */}
-          <div className="absolute top-3 right-3">
-            <Badge className={statusColors[post.status]}>
+          <div className="absolute top-4 right-4">
+            <Badge className={`${statusColors[post.status]} font-semibold`}>
               {post.status}
             </Badge>
           </div>
         </div>
       )}
 
-      {/* Metadata and Actions */}
-      <div className="p-4">
-        <div className="flex items-center gap-2 mb-4">
-          <span className="text-sm text-gray-600">
-            Post
-          </span>
-          <span className="text-sm text-gray-400">•</span>
-          <time className="text-sm text-gray-600">
+      {/* Content Section */}
+      <div className="p-6">
+        {/* Metadata Row */}
+        <div className="flex items-center gap-3 mb-4 text-sm text-gray-600">
+          <span className="font-medium text-gray-700">Post</span>
+          <span className="text-gray-300">•</span>
+          <time className="text-gray-600">
             {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
           </time>
         </div>
 
-        {/* Category and Metadata */}
+        {/* Category Badge */}
         {post.category && (
           <Link
             href={`/category/${post.category.slug}`}
-            className="text-sm font-medium text-blue-600 hover:text-blue-700 block mb-4"
+            className="inline-block mb-4"
           >
-            {post.category.name}
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors">
+              📁 {post.category.name}
+            </span>
           </Link>
         )}
 
+        {/* Preview Text */}
+        {preview && (
+          <p className="text-gray-700 mb-4 leading-6 line-clamp-3">
+            {preview}
+          </p>
+        )}
+
+        {/* Tags Section */}
+        {!tagsLoading && tags.length > 0 && (
+          <div className="mb-5">
+            <PostTagsDisplay tags={tags} />
+          </div>
+        )}
+
+        {/* Divider */}
+        <div className="border-t border-gray-100 my-4"></div>
+
         {/* Action Buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Link href={`/posts/${post.slug}`}>
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button variant="outline" size="sm" className="gap-2 border-blue-200 text-blue-600 hover:bg-blue-50">
               <Eye className="h-4 w-4" />
-              View
+              Read Full
             </Button>
           </Link>
 
           {canEdit && (
             <Link href={`/posts/${post.slug}/edit`}>
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2 text-gray-600 hover:bg-gray-50">
                 <Edit className="h-4 w-4" />
                 Edit
               </Button>
@@ -171,7 +220,7 @@ export function PostCard({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="gap-2 text-red-600 hover:text-red-700"
+                  className="gap-2 text-red-600 border-red-200 hover:bg-red-50"
                   disabled={isDeleting}
                 >
                   <Trash2 className="h-4 w-4" />
@@ -180,8 +229,8 @@ export function PostCard({
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Delete Post</AlertDialogTitle>
-                  <AlertDialogDescription>
+                  <AlertDialogTitle className="text-gray-900">Delete Post</AlertDialogTitle>
+                  <AlertDialogDescription className="text-gray-600">
                     Are you sure you want to delete "{post.title}"? This action cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
@@ -189,7 +238,7 @@ export function PostCard({
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleDelete}
-                    className="bg-red-600 hover:bg-red-700"
+                    className="bg-red-600 hover:bg-red-700 text-white"
                   >
                     Delete
                   </AlertDialogAction>

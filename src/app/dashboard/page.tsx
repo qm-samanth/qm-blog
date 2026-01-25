@@ -61,8 +61,8 @@ export default function DashboardPage() {
       <Navbar />
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Your Dashboard</h1>
-          <p className="text-gray-600">Manage your posts and content</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Your Dashboard</h1>
+          <p className="text-gray-700 font-medium">Manage your posts and content</p>
         </div>
 
         {/* Stats Grid */}
@@ -99,7 +99,7 @@ export default function DashboardPage() {
         {/* Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
             <div className="space-y-3">
               <Link href="/posts/create" className="block">
                 <Button className="w-full justify-start">
@@ -117,8 +117,8 @@ export default function DashboardPage() {
           </div>
 
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold mb-4">Account Info</h2>
-            <div className="space-y-3 text-sm">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Account Info</h2>
+            <div className="space-y-3 text-sm text-gray-800">
               <div>
                 <strong>Email:</strong> {session?.user?.email}
               </div>

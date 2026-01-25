@@ -18,6 +18,7 @@ export interface Post {
   category_id?: number;
   status: PostStatus;
   reviewer_id?: string;
+  featured_image_url?: string;
   created_at: Date;
   updated_at: Date;
   author?: User;

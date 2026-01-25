@@ -59,7 +59,7 @@ body {
 }
 
 .prose blockquote {
-  @apply border-l-4 border-blue-500 pl-4 my-4 italic text-gray-700 bg-gray-50 py-2 pr-4;
+  @apply border-l-4 border-teal-500 pl-4 my-4 italic text-gray-700 bg-teal-50 py-2 pr-4;
 }
 
 .prose code {
@@ -75,7 +75,7 @@ body {
 }
 
 .prose a {
-  @apply text-blue-600 hover:text-blue-800 underline;
+  @apply text-teal-600 hover:text-teal-800 underline;
 }
 
 .prose img {
@@ -92,5 +92,18 @@ body {
 
 .prose u {
   @apply underline;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  @apply w-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded hover:bg-gray-500;
 }
 

@@ -90,12 +90,12 @@ export default function SignIn() {
           </Button>
         </form>
 
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-          <p className="text-sm text-gray-600 mb-2">Demo Credentials:</p>
-          <div className="text-xs space-y-1 font-mono">
-            <p><strong>Admin:</strong> admin@example.com / admin123</p>
-            <p><strong>Reviewer:</strong> reviewer@example.com / reviewer123</p>
-            <p><strong>User:</strong> user@example.com / user123</p>
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <p className="text-sm font-semibold text-gray-900 mb-3">Demo Credentials:</p>
+          <div className="text-xs space-y-2 font-mono text-gray-800">
+            <p><strong className="text-gray-900">Admin:</strong> <span className="text-gray-700">admin@example.com / admin123</span></p>
+            <p><strong className="text-gray-900">Reviewer:</strong> <span className="text-gray-700">reviewer@example.com / reviewer123</span></p>
+            <p><strong className="text-gray-900">User:</strong> <span className="text-gray-700">user@example.com / user123</span></p>
           </div>
         </div>
       </div>
