@@ -28,6 +28,7 @@ export function EditPostForm({ post }: { post: Post }) {
   const [slug, setSlug] = useState(post.slug);
   const [slugTouched, setSlugTouched] = useState(false);
   const [content, setContent] = useState(post.content);
+  const [excerpt, setExcerpt] = useState((post as any).excerpt || "");
   const [categoryId, setCategoryId] = useState<string>(post.category_id?.toString() || "");
   const [featuredImageUrl, setFeaturedImageUrl] = useState<string | undefined>(post.featured_image_url);
   const [showPreview, setShowPreview] = useState(false);
@@ -144,6 +145,7 @@ export function EditPostForm({ post }: { post: Post }) {
         title,
         slug,
         content,
+        excerpt,
         categoryId: parseInt(categoryId),
         featuredImageUrl,
       });
@@ -210,6 +212,22 @@ export function EditPostForm({ post }: { post: Post }) {
             required
           />
           <p className="text-xs text-gray-500 mt-1">URL will be: /posts/{slug || "your-slug"}</p>
+        </div>
+
+        <div>
+          <label htmlFor="excerpt" className="block text-sm font-medium text-gray-700 mb-2">
+            Short Description (Excerpt)
+          </label>
+          <textarea
+            id="excerpt"
+            value={excerpt}
+            onChange={(e) => setExcerpt(e.target.value)}
+            placeholder="A brief summary of your post (2-3 sentences)"
+            maxLength={200}
+            rows={3}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+          />
+          <p className="text-xs text-gray-500 mt-1">{excerpt.length}/200 characters</p>
         </div>
 
         <div>

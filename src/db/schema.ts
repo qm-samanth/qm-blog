@@ -48,6 +48,7 @@ export const posts = pgTable("posts", {
   title: varchar("title", { length: 255 }).notNull(),
   slug: varchar("slug", { length: 255 }).notNull(),
   content: text("content").notNull(),
+  excerpt: text("excerpt"),
   author_id: uuid("author_id").notNull(),
   category_id: integer("category_id"),
   featured_image_url: text("featured_image_url"),

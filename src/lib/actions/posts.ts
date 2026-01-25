@@ -11,6 +11,7 @@ interface CreatePostInput {
   title: string;
   slug: string;
   content: string;
+  excerpt?: string;
   categoryId: number;
   featuredImageUrl?: string;
 }
@@ -47,6 +48,7 @@ interface UpdatePostInput {
   title?: string;
   slug?: string;
   content?: string;
+  excerpt?: string;
   categoryId?: number;
   featuredImageUrl?: string;
   status?: PostStatus;
@@ -79,6 +81,7 @@ export async function createPost(input: CreatePostInput) {
       title: input.title,
       slug: input.slug,
       content: input.content,
+      excerpt: input.excerpt,
       author_id: session.user.id,
       category_id: input.categoryId,
       featured_image_url: input.featuredImageUrl,
@@ -158,6 +161,7 @@ export async function updatePost(postId: string, input: UpdatePostInput) {
         ...(input.title && { title: input.title }),
         ...(input.slug && { slug: input.slug }),
         ...(input.content && { content: input.content }),
+        ...(input.excerpt !== undefined && { excerpt: input.excerpt }),
         ...(input.categoryId !== undefined && { category_id: input.categoryId }),
         ...(input.featuredImageUrl !== undefined && { featured_image_url: input.featuredImageUrl }),
         // If editing a published post, revert to DRAFT for review

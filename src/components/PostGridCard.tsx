@@ -65,7 +65,7 @@ export function PostGridCard({
     }
   };
 
-  const preview = getPlainTextPreview(post.content, 140);
+  const preview = (post as any).excerpt || getPlainTextPreview(post.content, 140);
 
   return (
     <article className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">

@@ -21,6 +21,7 @@ export default function CreatePostPage() {
   const [slug, setSlug] = useState("");
   const [slugTouched, setSlugTouched] = useState(false);
   const [content, setContent] = useState("");
+  const [excerpt, setExcerpt] = useState("");
   const [categoryId, setCategoryId] = useState<string>("");
   const [featuredImageUrl, setFeaturedImageUrl] = useState<string | undefined>();
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
@@ -141,6 +142,7 @@ export default function CreatePostPage() {
         title,
         slug,
         content,
+        excerpt,
         categoryId: parseInt(categoryId),
         featuredImageUrl,
       });
@@ -212,6 +214,22 @@ export default function CreatePostPage() {
                   required
                 />
                 <p className="text-xs text-gray-500 mt-1">URL will be: /posts/{slug || "your-slug"}</p>
+              </div>
+
+              <div>
+                <label htmlFor="excerpt" className="block text-sm font-medium text-gray-700 mb-2">
+                  Short Description
+                </label>
+                <textarea
+                  id="excerpt"
+                  value={excerpt}
+                  onChange={(e) => setExcerpt(e.target.value)}
+                  placeholder="A brief summary of your post (2-3 sentences)"
+                  maxLength={200}
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                />
+                <p className="text-xs text-gray-500 mt-1">{excerpt.length}/200 characters</p>
               </div>
 
               <div>
