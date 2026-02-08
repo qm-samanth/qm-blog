@@ -6,6 +6,18 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       <Navbar />
       <main className="w-full">
+        {/* Hero Section */}
+        <div className="w-full py-20 px-4">
+          <div className="container mx-auto">
+            <h1 className="text-6xl font-bold text-black mb-6">Qualminds Blog</h1>
+            <p className="text-xl text-gray-800">
+              Welcome to the QualMinds Blog, your premier destination for insights, trends, and expertise in IT services. 
+              We share valuable knowledge on technology, innovation, and digital transformation to help businesses thrive in the modern era.
+            </p>
+          </div>
+        </div>
+
+        {/* Posts Section */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <SmartFeed />
         </div>

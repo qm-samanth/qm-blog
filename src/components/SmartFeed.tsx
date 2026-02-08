@@ -83,25 +83,6 @@ export function SmartFeed() {
 
   return (
     <div className="space-y-8">
-      {/* Hero Section */}
-      <div className="relative h-52 sm:h-64 md:h-72 rounded-lg overflow-hidden bg-gradient-to-r from-teal-600 to-blue-600 shadow-lg">
-        <div className="absolute inset-0 bg-black/30 z-10"></div>
-        {posts[0]?.featured_image_url && (
-          <img
-            src={posts[0].featured_image_url}
-            alt="hero"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        )}
-        <div className="relative z-20 h-full flex items-center justify-center text-center px-4">
-          <div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white drop-shadow-lg">
-              {posts[0]?.title || "Welcome to Our Blog"}
-            </h1>
-          </div>
-        </div>
-      </div>
-
       {/* Categories Filter */}
       {categories.length > 1 && (
         <div className="flex flex-wrap gap-2 pb-2 border-b-2 border-gray-200 overflow-x-auto">
