@@ -3,10 +3,27 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { LogOut, Settings, LayoutDashboard, Image as ImageIcon, Tag, Facebook, Twitter, Linkedin, Instagram, Lock } from "lucide-react";
+import { LogOut, Settings, LayoutDashboard, Image as ImageIcon, Tag, Facebook, Twitter, Linkedin, Instagram, Lock, ChevronDown } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 
 export function Navbar() {
   const { data: session } = useSession();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const firstName = (session?.user as any)?.firstName;
+  const lastName = (session?.user as any)?.lastName;
 
   return (
     <header style={{ backgroundColor: "#690031" }} className="shadow-sm">
@@ -41,82 +58,128 @@ export function Navbar() {
 
           {/* User Section */}
           {session?.user ? (
-            <>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-white">{session.user.email}</span>
-                <span className="text-xs bg-pink-200 text-purple-900 px-2 py-1">
-                  {session.user.role}
-                </span>
-              </div>
+            <div className="relative" ref={dropdownRef}>
+              {/* Email with Dropdown Toggle */}
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center gap-2 text-sm text-white hover:opacity-80 transition"
+              >
+                <span>{session.user.email}</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
 
-              {(session.user.role === "ADMIN" || session.user.role === "REVIEWER") && (
-                <>
-                  {session.user.role === "ADMIN" && (
-                    <>
-                      <Link href="/admin">
-                        <Button variant="outline" size="sm" className="gap-2 text-white border-white hover:bg-opacity-90">
-                          <Settings className="h-4 w-4" />
-                          Admin
-                        </Button>
+              {/* Dropdown Menu */}
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg z-50 py-2">
+                  {/* Greeting */}
+                  <div className="px-4 py-3 border-b border-gray-200">
+                    <p className="text-gray-900 font-semibold text-sm">
+                      Hello {firstName && lastName ? `${firstName} ${lastName}` : session.user.email}
+                    </p>
+                    <p className="text-xs text-gray-600">{session.user.role}</p>
+                  </div>
+
+                  {/* Menu Items */}
+                  <div className="py-2">
+                    {/* Role-Specific Links - Dashboard First */}
+                    {session.user.role === "USER" && (
+                      <Link href="/dashboard">
+                        <button
+                          onClick={() => setDropdownOpen(false)}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 flex items-center gap-3"
+                        >
+                          <LayoutDashboard className="h-4 w-4" />
+                          Dashboard
+                        </button>
                       </Link>
-                      <Link href="/admin/tags">
-                        <Button variant="outline" size="sm" className="gap-2 text-white border-white hover:bg-opacity-90">
-                          <Tag className="h-4 w-4" />
-                          Tags
-                        </Button>
-                      </Link>
+                    )}
+
+                    {session.user.role === "REVIEWER" && (
                       <Link href="/review">
-                        <Button variant="outline" size="sm" className="gap-2 text-white border-white hover:bg-opacity-90">
+                        <button
+                          onClick={() => setDropdownOpen(false)}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 flex items-center gap-3"
+                        >
                           <LayoutDashboard className="h-4 w-4" />
                           Review Queue
-                        </Button>
+                        </button>
                       </Link>
-                    </>
-                  )}
-                  {session.user.role === "REVIEWER" && (
-                    <Link href="/review">
-                      <Button variant="outline" size="sm" className="gap-2 text-white border-white hover:bg-opacity-90">
-                        <LayoutDashboard className="h-4 w-4" />
-                        Review Queue
-                      </Button>
+                    )}
+
+                    {session.user.role === "ADMIN" && (
+                      <Link href="/admin">
+                        <button
+                          onClick={() => setDropdownOpen(false)}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 flex items-center gap-3"
+                        >
+                          <Settings className="h-4 w-4" />
+                          Admin
+                        </button>
+                      </Link>
+                    )}
+
+                    {/* Images Link */}
+                    <Link href="/image-manager">
+                      <button
+                        onClick={() => setDropdownOpen(false)}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 flex items-center gap-3"
+                      >
+                        <ImageIcon className="h-4 w-4" />
+                        Images
+                      </button>
                     </Link>
-                  )}
-                </>
+
+                    {/* Settings Link */}
+                    <Link href="/settings">
+                      <button
+                        onClick={() => setDropdownOpen(false)}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 flex items-center gap-3"
+                      >
+                        <Lock className="h-4 w-4" />
+                        Settings
+                      </button>
+                    </Link>
+
+                    {/* Additional ADMIN Links */}
+                    {session.user.role === "ADMIN" && (
+                      <>
+                        <Link href="/admin/tags">
+                          <button
+                            onClick={() => setDropdownOpen(false)}
+                            className="w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 flex items-center gap-3"
+                          >
+                            <Tag className="h-4 w-4" />
+                            Tags
+                          </button>
+                        </Link>
+
+                        <Link href="/review">
+                          <button
+                            onClick={() => setDropdownOpen(false)}
+                            className="w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 flex items-center gap-3"
+                          >
+                            <LayoutDashboard className="h-4 w-4" />
+                            Review Queue
+                          </button>
+                        </Link>
+                      </>
+                    )}
+
+                    {/* Sign Out Link */}
+                    <button
+                      onClick={() => {
+                        setDropdownOpen(false);
+                        signOut();
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 border-t border-gray-200 mt-2"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
               )}
-
-              {session.user.role === "USER" && (
-                <Link href="/dashboard">
-                  <Button variant="outline" size="sm" className="gap-2 text-white border-white hover:bg-opacity-90">
-                    <LayoutDashboard className="h-4 w-4" />
-                    Dashboard
-                  </Button>
-                </Link>
-              )}
-
-              <Link href="/image-manager">
-                <Button variant="outline" size="sm" className="gap-2 text-white border-white hover:bg-opacity-90">
-                  <ImageIcon className="h-4 w-4" />
-                  Images
-                </Button>
-              </Link>
-
-              <Link href="/settings">
-                <Button variant="outline" size="sm" className="gap-2 text-white border-white hover:bg-opacity-90">
-                  <Lock className="h-4 w-4" />
-                  Settings
-                </Button>
-              </Link>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => signOut()}
-                className="gap-2 text-white border-white hover:bg-opacity-90"
-              >
-                <LogOut className="h-4 w-4" />
-                Sign Out
-              </Button>
-            </>
+            </div>
           ) : (
             <Link href="/auth/signin">
               <Button style={{ backgroundColor: "#f5dbc6", color: "#690031" }} className="font-bold hover:opacity-90 px-4 py-1 rounded-sm h-9">Sign In</Button>
