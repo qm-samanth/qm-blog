@@ -11,8 +11,18 @@ import type { Post, UserRole } from "@/types";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, ArrowLeft } from "lucide-react";
+import { CheckCircle, XCircle, ArrowLeft, Edit2, Trash2 } from "lucide-react";
 import Link from "next/link";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function ReviewPage() {
   const { data: session, status } = useSession();
@@ -103,12 +113,14 @@ export default function ReviewPage() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#fbf7f4" }}>
       <Navbar />
-      <main className="container mx-auto px-4 py-8">
-        <Link href="/admin" className="flex items-center gap-2 mb-8 hover:opacity-80 transition" style={{ color: "#690031" }}>
-          <ArrowLeft className="h-4 w-4" />
-          Back to Dashboard
-        </Link>
-        <div className="mb-8">
+      <main className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="flex justify-center mb-8">
+          <Link href="/admin" className="flex items-center gap-2 hover:opacity-80 transition" style={{ color: "#690031" }}>
+            <ArrowLeft className="h-4 w-4" />
+            Back to Dashboard
+          </Link>
+        </div>
+        <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold mb-2">Review Queue</h1>
           <p className="text-gray-600">
             {pendingPosts.length} pending posts awaiting review
@@ -116,7 +128,7 @@ export default function ReviewPage() {
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          <div className="mb-6 p-4 rounded" style={{ backgroundColor: "#f0e6eb", color: "#690031", border: "1px solid #690031" }}>
             {error}
           </div>
         )}
@@ -145,34 +157,64 @@ export default function ReviewPage() {
 
         {reviewedPosts.length > 0 && (
           <div className="mt-12">
-            <h2 className="text-2xl font-bold mb-4">Reviewed Posts</h2>
-            <div className="space-y-4">
-              {reviewedPosts.map((post) => (
-                <div
-                  key={post.id}
-                  className="bg-white rounded-lg p-4 flex items-center justify-between opacity-75"
-                >
-                  <div>
-                    <p className="font-medium text-gray-900">{post.title}</p>
-                    <p className="text-sm text-gray-600">
-                      Status: {post.status}
-                    </p>
-                  </div>
-                  <Badge
-                    className={
-                      post.status === "PUBLISHED"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }
-                  >
-                    {post.status}
-                  </Badge>
-                </div>
-              ))}
+            <h2 className="text-2xl font-bold mb-4 pb-3 border-b-2" style={{ color: "#690031", borderBottomColor: "#690031" }}>Reviewed Posts</h2>
+            <div className="bg-white rounded-lg overflow-hidden">
+              <table className="w-full">
+                <thead style={{ backgroundColor: "#f5dbc6" }}>
+                  <tr>
+                    <th className="px-6 py-3 text-left text-sm font-semibold" style={{ color: "#690031" }}>Title</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold" style={{ color: "#690031" }}>Status</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold" style={{ color: "#690031" }}>Author</th>
+                    <th className="px-6 py-3 text-right text-sm font-semibold" style={{ color: "#690031" }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {reviewedPosts.map((post) => (
+                    <tr key={post.id} className="transition table-row-hover-reviewed">
+                      <td className="px-6 py-4">
+                        <p className="font-medium text-gray-900">{post.title}</p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <Badge
+                          style={{
+                            backgroundColor: post.status === "PUBLISHED" ? "#d4edda" : "#f8d7da",
+                            color: post.status === "PUBLISHED" ? "#155724" : "#856404",
+                          }}
+                        >
+                          {post.status}
+                        </Badge>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">
+                        {post.author_id || "Unknown"}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex gap-2 justify-end">
+                          <Link href={`/posts/${post.slug}/edit`}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="gap-2 border-2"
+                              style={{ borderColor: "#690031", color: "#690031" }}
+                            >
+                              <Edit2 className="h-4 w-4" />
+                              Edit
+                            </Button>
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
       </main>
+      <style>{`
+        .table-row-hover-reviewed:hover {
+          background-color: #f5dbc6;
+        }
+      `}</style>
     </div>
   );
 }

@@ -6,7 +6,8 @@ import { redirect } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, Edit2, Plus } from "lucide-react";
+import { Trash2, Edit2, Plus, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -117,7 +118,7 @@ export default function AdminCategoriesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ backgroundColor: "#fbf7f4" }}>
         <Navbar />
         <main className="container mx-auto px-4 py-8">
           <div className="text-center">Loading categories...</div>
@@ -127,14 +128,18 @@ export default function AdminCategoriesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: "#fbf7f4" }}>
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl">
+        <div className="max-w-4xl mx-auto">
+          <Link href="/admin" className="flex items-center gap-2 mb-8 hover:opacity-80 transition" style={{ color: "#690031" }}>
+            <ArrowLeft className="h-4 w-4" />
+            Back to Dashboard
+          </Link>
           <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl font-bold">Manage Categories</h1>
+            <h1 className="text-3xl font-bold" style={{ color: "#690031" }}>Manage Categories</h1>
             {!showForm && (
-              <Button onClick={() => setShowForm(true)} className="gap-2">
+              <Button onClick={() => setShowForm(true)} className="gap-2 text-white" style={{ backgroundColor: "#690031" }}>
                 <Plus className="h-4 w-4" />
                 New Category
               </Button>
@@ -142,20 +147,20 @@ export default function AdminCategoriesPage() {
           </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+            <div className="mb-6 p-4 rounded" style={{ backgroundColor: "#f0e6eb", color: "#690031", border: "1px solid #690031" }}>
               {error}
             </div>
           )}
 
           {/* Form */}
           {showForm && (
-            <div className="mb-8 bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold mb-4">
+            <div className="mb-8 bg-white rounded-lg p-6">
+              <h2 className="text-xl font-semibold mb-4 pb-3 border-b-2" style={{ color: "#690031", borderBottomColor: "#690031" }}>
                 {editingId ? "Edit Category" : "Create New Category"}
               </h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-2">
                     Name *
                   </label>
                   <input
@@ -164,13 +169,14 @@ export default function AdminCategoriesPage() {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="Category name"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent"
+                    style={{ "--focus-ring-color": "#690031" } as any}
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="slug" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="slug" className="block text-sm font-medium text-gray-900 mb-2">
                     Slug *
                   </label>
                   <input
@@ -179,15 +185,20 @@ export default function AdminCategoriesPage() {
                     value={formData.slug}
                     onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                     placeholder="category-slug"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent"
+                    style={{ "--focus-ring-color": "#690031" } as any}
                     required
                   />
-                  <p className="text-xs text-gray-500 mt-1">URL-friendly version of the name (lowercase, hyphens only)</p>
                 </div>
 
-                <div className="flex gap-3">
-                  <Button type="submit" disabled={submitting}>
-                    {submitting ? "Saving..." : "Save Category"}
+                <div className="flex gap-3 pt-2">
+                  <Button
+                    type="submit"
+                    disabled={submitting}
+                    className="text-white"
+                    style={{ backgroundColor: "#690031" }}
+                  >
+                    {submitting ? "Saving..." : editingId ? "Update Category" : "Save Category"}
                   </Button>
                   <Button type="button" variant="outline" onClick={handleCancel}>
                     Cancel
@@ -199,50 +210,48 @@ export default function AdminCategoriesPage() {
 
           {/* Categories List */}
           {categories.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+            <div className="text-center py-12 bg-white rounded-lg">
               <p className="text-gray-600">No categories yet. Create your first one!</p>
             </div>
           ) : (
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-lg overflow-hidden">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b">
+                <thead style={{ backgroundColor: "#f5dbc6" }}>
                   <tr>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Name</th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">Slug</th>
-                    <th className="px-6 py-3 text-right text-sm font-semibold text-gray-900">Actions</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold" style={{ color: "#690031" }}>Name</th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold" style={{ color: "#690031" }}>Slug</th>
+                    <th className="px-6 py-3 text-right text-sm font-semibold" style={{ color: "#690031" }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
                   {categories.map((category) => (
-                    <tr key={category.id} className="hover:bg-gray-50">
+                    <tr key={category.id} className="transition table-row-hover-cat">
                       <td className="px-6 py-4">
                         <p className="font-medium text-gray-900">{category.name}</p>
                       </td>
                       <td className="px-6 py-4">
-                        <Badge variant="outline">{category.slug}</Badge>
+                        <Badge style={{ backgroundColor: "#f5dbc6", color: "#690031" }}>{category.slug}</Badge>
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex gap-2 justify-end">
-                          <Button
-                            variant="outline"
-                            size="sm"
+                          <button
                             onClick={() => handleEdit(category)}
-                            className="gap-2"
+                            className="p-2 rounded transition"
+                            style={{ color: "#690031" }}
+                            title="Edit category"
                           >
                             <Edit2 className="h-4 w-4" />
-                            Edit
-                          </Button>
+                          </button>
 
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="gap-2 text-red-600 hover:text-red-700"
+                              <button
+                                className="p-2 rounded transition"
+                                style={{ color: "#690031" }}
+                                title="Delete category"
                               >
                                 <Trash2 className="h-4 w-4" />
-                                Delete
-                              </Button>
+                              </button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
                               <AlertDialogHeader>
@@ -256,7 +265,8 @@ export default function AdminCategoriesPage() {
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() => handleDelete(category.id)}
-                                  className="bg-red-600 hover:bg-red-700"
+                                  className="text-white"
+                                  style={{ backgroundColor: "#690031" }}
                                 >
                                   Delete
                                 </AlertDialogAction>
@@ -273,6 +283,11 @@ export default function AdminCategoriesPage() {
           )}
         </div>
       </main>
+      <style>{`
+        .table-row-hover-cat:hover {
+          background-color: #f5dbc6;
+        }
+      `}</style>
     </div>
   );
 }
