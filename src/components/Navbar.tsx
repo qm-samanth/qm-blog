@@ -24,17 +24,17 @@ export function Navbar() {
           </Link>
 
           {/* Social Media Icons */}
-          <div className="flex items-center gap-3">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gray-200 transition">
+          <div className="flex items-center gap-2">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:opacity-70 transition" style={{ backgroundColor: "#f5dbc6", color: "#690031" }}>
               <Facebook className="h-4 w-4" />
             </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gray-200 transition">
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:opacity-70 transition" style={{ backgroundColor: "#f5dbc6", color: "#690031" }}>
               <Twitter className="h-4 w-4" />
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gray-200 transition">
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:opacity-70 transition" style={{ backgroundColor: "#f5dbc6", color: "#690031" }}>
               <Linkedin className="h-4 w-4" />
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gray-200 transition">
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:opacity-70 transition" style={{ backgroundColor: "#f5dbc6", color: "#690031" }}>
               <Instagram className="h-4 w-4" />
             </a>
           </div>
