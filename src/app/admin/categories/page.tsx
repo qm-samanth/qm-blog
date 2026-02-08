@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, Edit2, Plus, ArrowLeft } from "lucide-react";
+import { Trash2, Edit2, Plus, ArrowLeft, X } from "lucide-react";
 import Link from "next/link";
 import {
   AlertDialog,
@@ -136,28 +136,39 @@ export default function AdminCategoriesPage() {
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
           </Link>
-          <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl font-bold" style={{ color: "#690031" }}>Manage Categories</h1>
-            {!showForm && (
-              <Button onClick={() => setShowForm(true)} className="gap-2 text-white" style={{ backgroundColor: "#690031" }}>
-                <Plus className="h-4 w-4" />
-                New Category
-              </Button>
-            )}
-          </div>
 
-          {error && (
-            <div className="mb-6 p-4 rounded" style={{ backgroundColor: "#f0e6eb", color: "#690031", border: "1px solid #690031" }}>
-              {error}
+          <div className="space-y-6">
+            {/* Page Header */}
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold" style={{ color: "#690031" }}>Manage Categories</h1>
+              {!showForm && (
+                <Button onClick={() => setShowForm(true)} className="gap-2 text-white" style={{ backgroundColor: "#690031" }}>
+                  <Plus className="h-4 w-4" />
+                  New Category
+                </Button>
+              )}
             </div>
-          )}
 
-          {/* Form */}
-          {showForm && (
-            <div className="mb-8 bg-white rounded-lg p-6">
-              <h2 className="text-xl font-semibold mb-4 pb-3 border-b-2" style={{ color: "#690031", borderBottomColor: "#690031" }}>
-                {editingId ? "Edit Category" : "Create New Category"}
-              </h2>
+            {error && (
+              <div className="p-4 rounded flex items-start justify-between" style={{ backgroundColor: "#f0e6eb", color: "#690031", border: "1px solid #690031" }}>
+                <span>{error}</span>
+                <button
+                  onClick={() => setError(null)}
+                  className="hover:opacity-70"
+                  style={{ color: "#690031" }}
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            )}
+
+            {/* Form */}
+            {showForm && (
+              <div className="bg-white rounded-lg p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4 pb-3 flex items-center gap-2 border-b-2" style={{ color: "#690031", borderBottomColor: "#690031" }}>
+                  <Plus className="h-5 w-5" />
+                  {editingId ? "Edit Category" : "Create New Category"}
+                </h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-900 mb-2">
@@ -208,14 +219,21 @@ export default function AdminCategoriesPage() {
             </div>
           )}
 
-          {/* Categories List */}
-          {categories.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-lg">
-              <p className="text-gray-600">No categories yet. Create your first one!</p>
-            </div>
-          ) : (
+            {/* Categories List */}
             <div className="bg-white rounded-lg overflow-hidden">
-              <table className="w-full">
+              <div className="p-6 border-b-2" style={{ borderBottomColor: "#690031" }}>
+                <h2 className="text-xl font-semibold text-gray-900" style={{ color: "#690031" }}>
+                  All Categories ({categories.length})
+                </h2>
+              </div>
+
+              {categories.length === 0 ? (
+                <div className="p-6 text-center text-gray-500">
+                  No categories yet. Create one to get started!
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
                 <thead style={{ backgroundColor: "#f5dbc6" }}>
                   <tr>
                     <th className="px-6 py-3 text-left text-sm font-semibold" style={{ color: "#690031" }}>Name</th>
@@ -279,8 +297,10 @@ export default function AdminCategoriesPage() {
                   ))}
                 </tbody>
               </table>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </main>
       <style>{`
