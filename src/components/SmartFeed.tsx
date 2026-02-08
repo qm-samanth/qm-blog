@@ -85,7 +85,7 @@ export function SmartFeed() {
     <div className="space-y-8">
       {/* Categories Filter */}
       {categories.length > 1 && (
-        <div className="flex flex-wrap gap-2 pb-2 border-b-2 border-gray-200 overflow-x-auto">
+        <div className="flex flex-wrap gap-2 pb-2 overflow-x-auto">
           {categories.map((cat) => (
             <button
               key={cat.id}
