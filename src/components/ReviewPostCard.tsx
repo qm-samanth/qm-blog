@@ -63,7 +63,7 @@ export function ReviewPostCard({
 
   return (
     <>
-      <div className="border border-gray-200 rounded-lg p-6 bg-white">
+      <div className="rounded-lg p-6 bg-white">
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">
             <Link href={`/posts/${slug}`} className="hover:underline">
@@ -80,7 +80,8 @@ export function ReviewPostCard({
         <div className="flex gap-3 mt-4">
           <Button
             onClick={() => setShowApproveModal(true)}
-            className="bg-green-600 hover:bg-green-700 text-white gap-2"
+            className="text-white gap-2"
+            style={{ backgroundColor: "#690031" }}
             disabled={isLoading}
           >
             <Check className="h-4 w-4" />
@@ -88,7 +89,8 @@ export function ReviewPostCard({
           </Button>
           <Button
             onClick={() => setShowRejectModal(true)}
-            className="bg-red-600 hover:bg-red-700 text-white gap-2"
+            className="text-white gap-2"
+            style={{ backgroundColor: "#690031" }}
             disabled={isLoading}
           >
             <X className="h-4 w-4" />
@@ -104,7 +106,7 @@ export function ReviewPostCard({
       {showApproveModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h2 className="text-xl font-bold mb-4 text-green-700">Approve Post</h2>
+            <h2 className="text-xl font-bold mb-4" style={{ color: "#690031" }}>Approve Post</h2>
             <p className="text-gray-600 mb-4 text-sm">{title}</p>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -114,7 +116,8 @@ export function ReviewPostCard({
                 value={comments}
                 onChange={(e) => setComments(e.target.value)}
                 placeholder="Add any feedback or congratulations message..."
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 resize-none"
+                style={{ focusRingColor: "#690031" }}
                 rows={4}
               />
             </div>
@@ -131,7 +134,8 @@ export function ReviewPostCard({
               </Button>
               <Button
                 onClick={handleApprove}
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="text-white"
+                style={{ backgroundColor: "#690031" }}
                 disabled={isLoading}
               >
                 {isLoading ? "Approving..." : "Approve"}
@@ -145,7 +149,7 @@ export function ReviewPostCard({
       {showRejectModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h2 className="text-xl font-bold mb-4 text-red-700">Reject Post</h2>
+            <h2 className="text-xl font-bold mb-4" style={{ color: "#690031" }}>Reject Post</h2>
             <p className="text-gray-600 mb-4 text-sm">{title}</p>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -155,7 +159,8 @@ export function ReviewPostCard({
                 value={comments}
                 onChange={(e) => setComments(e.target.value)}
                 placeholder="Please explain why this post is being rejected..."
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 resize-none"
+                style={{ focusRingColor: "#690031" }}
                 rows={4}
               />
               {!comments && (
@@ -175,7 +180,8 @@ export function ReviewPostCard({
               </Button>
               <Button
                 onClick={handleReject}
-                className="bg-red-600 hover:bg-red-700 text-white"
+                className="text-white"
+                style={{ backgroundColor: "#690031" }}
                 disabled={isLoading || !comments}
               >
                 {isLoading ? "Rejecting..." : "Reject"}

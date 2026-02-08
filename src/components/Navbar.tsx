@@ -155,27 +155,15 @@ export function Navbar() {
 
                     {/* Additional ADMIN Links */}
                     {session.user.role === "ADMIN" && (
-                      <>
-                        <Link href="/admin/tags">
-                          <button
-                            onClick={() => setDropdownOpen(false)}
-                            className="w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 flex items-center gap-3"
-                          >
-                            <Tag className="h-4 w-4" />
-                            Tags
-                          </button>
-                        </Link>
-
-                        <Link href="/review">
-                          <button
-                            onClick={() => setDropdownOpen(false)}
-                            className="w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 flex items-center gap-3"
-                          >
-                            <LayoutDashboard className="h-4 w-4" />
-                            Review Queue
-                          </button>
-                        </Link>
-                      </>
+                      <Link href="/review">
+                        <button
+                          onClick={() => setDropdownOpen(false)}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 flex items-center gap-3"
+                        >
+                          <LayoutDashboard className="h-4 w-4" />
+                          Review Queue
+                        </button>
+                      </Link>
                     )}
 
                     {/* Sign Out Link */}
