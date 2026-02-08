@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Folder, Image as ImageIcon, Trash2, Plus, Copy, Check, Upload } from "lucide-react";
+import { Folder, Image as ImageIcon, Trash2, Plus, Copy, Check, Upload } from "lucide-react";
 import Link from "next/link";
 
 interface Folder {
@@ -38,7 +38,7 @@ export default function ImageManagerPage() {
 
   if (!session?.user?.id) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ backgroundColor: "#fbf7f4" }}>
         <Navbar />
         <main className="container mx-auto px-4 py-8">
           <p className="text-red-600">Please sign in to access the image manager.</p>
@@ -252,7 +252,7 @@ export default function ImageManagerPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ backgroundColor: "#fbf7f4" }}>
         <Navbar />
         <main className="container mx-auto px-4 py-8">
           <p>Loading...</p>
@@ -262,18 +262,14 @@ export default function ImageManagerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: "#fbf7f4" }}>
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <Link href="/" className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6">
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="bg-white rounded-lg p-4">
               <h2 className="font-semibold text-gray-900 mb-4">Folders</h2>
 
               <div className="mb-4 flex gap-2">
@@ -284,7 +280,7 @@ export default function ImageManagerPage() {
                   onKeyPress={(e) => e.key === "Enter" && createFolder()}
                   className="text-sm"
                 />
-                <Button onClick={createFolder} size="sm" className="flex-shrink-0">
+                <Button onClick={createFolder} size="sm" className="flex-shrink-0 text-white" style={{ backgroundColor: "#690031" }}>
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
@@ -294,9 +290,10 @@ export default function ImageManagerPage() {
                   onClick={() => setSelectedFolder(null)}
                   className={`w-full text-left px-3 py-2 rounded-lg text-sm ${
                     !selectedFolder
-                      ? "bg-blue-100 text-blue-900 font-medium"
+                      ? "text-white font-medium"
                       : "hover:bg-gray-100 text-gray-700"
                   }`}
+                  style={!selectedFolder ? { backgroundColor: "#690031" } : {}}
                 >
                   <Folder className="h-4 w-4 inline mr-2" />
                   All Images
@@ -307,9 +304,10 @@ export default function ImageManagerPage() {
                     key={folder.id}
                     className={`flex items-center justify-between px-3 py-2 rounded-lg text-sm ${
                       selectedFolder?.id === folder.id
-                        ? "bg-blue-100 text-blue-900 font-medium"
+                        ? "text-white font-medium"
                         : "hover:bg-gray-100 text-gray-700"
                     }`}
+                    style={selectedFolder?.id === folder.id ? { backgroundColor: "#690031" } : {}}
                   >
                     <button
                       onClick={() => setSelectedFolder(folder)}
@@ -320,7 +318,11 @@ export default function ImageManagerPage() {
                     </button>
                     <button
                       onClick={() => deleteFolder(folder.id)}
-                      className="p-1 hover:bg-red-100 text-red-600 rounded"
+                      className={`p-1 rounded ${
+                        selectedFolder?.id === folder.id
+                          ? "text-white hover:opacity-80"
+                          : "hover:bg-red-100 text-red-600"
+                      }`}
                       title="Delete folder"
                     >
                       <Trash2 className="h-3 w-3" />
@@ -333,7 +335,7 @@ export default function ImageManagerPage() {
 
           {/* Main Content */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="bg-white rounded-lg p-6">
               <div className="flex items-center justify-between mb-6">
                 <h1 className="text-2xl font-bold text-gray-900">
                   {selectedFolder ? selectedFolder.name : "All Images"}
@@ -352,7 +354,8 @@ export default function ImageManagerPage() {
                   <Button
                     onClick={() => fileInputRef.current?.click()}
                     disabled={uploading}
-                    className="gap-2"
+                    className="gap-2 text-white"
+                    style={{ backgroundColor: "#690031" }}
                   >
                     <Upload className="h-4 w-4" />
                     {uploading ? "Uploading..." : "Upload Image"}
@@ -372,7 +375,7 @@ export default function ImageManagerPage() {
                   {displayImages.map((image) => (
                     <div
                       key={image.id}
-                      className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden group hover:shadow-md transition-shadow"
+                      className="bg-gray-50 rounded-lg overflow-hidden group hover:shadow-md transition-shadow"
                     >
                       <div className="relative overflow-hidden bg-gray-100 h-48">
                         <img
@@ -390,7 +393,8 @@ export default function ImageManagerPage() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => copyImageUrl(image.cloudinary_url)}
-                            className="flex-1 px-3 py-2 text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 rounded flex items-center justify-center gap-2"
+                            className="flex-1 px-3 py-2 text-sm text-white hover:opacity-90 rounded flex items-center justify-center gap-2"
+                            style={{ backgroundColor: "#690031" }}
                           >
                             {copying === image.cloudinary_url ? (
                               <>
