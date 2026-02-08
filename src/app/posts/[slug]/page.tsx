@@ -22,6 +22,7 @@ interface Post {
   author_id: string;
   status: string;
   featured_image_url?: string;
+  excerpt?: string;
   created_at: Date;
   updated_at: Date;
   author?: {
@@ -123,6 +124,9 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               eq(posts.status, "PUBLISHED")
             ),
             limit: 4,
+            with: {
+              author: true,
+            },
           });
           relatedPosts = relatedPostsData as Post[];
         }
@@ -231,17 +235,22 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                           {post.status}
                         </span>
                       </div>
-                      {canEdit && (
-                        <div className="flex gap-3">
-                          <Link href={`/posts/${post.slug}/edit`}>
-                            <Button variant="outline" size="lg" className="border-2 px-6 py-3" style={{ borderColor: "#690031", color: "#690031" }}>
-                              <Edit2 className="h-5 w-5 mr-2" />
-                              Edit
-                            </Button>
-                          </Link>
-                          <DeletePostButton postId={post.id} />
-                        </div>
-                      )}
+                      <div className="flex flex-wrap items-center gap-3">
+                        {(post.status === "DRAFT" || post.status === "REJECTED") && session?.user?.id === post.author_id && (
+                          <SubmitForReviewButton postId={post.id} />
+                        )}
+                        {canEdit && (
+                          <>
+                            <Link href={`/posts/${post.slug}/edit`}>
+                              <Button variant="outline" size="lg" className="border-2 px-6 py-3" style={{ borderColor: "#690031", color: "#690031" }}>
+                                <Edit2 className="h-5 w-5 mr-2" />
+                                Edit
+                              </Button>
+                            </Link>
+                            <DeletePostButton postId={post.id} />
+                          </>
+                        )}
+                      </div>
                     </div>
                   </>
                 )}
@@ -274,10 +283,6 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                 </div>
 
                 <div className="p-8 lg:p-10">
-                  
-                  {(post.status === "DRAFT" || post.status === "REJECTED") && session?.user?.id === post.author_id && (
-                    <SubmitForReviewButton postId={post.id} />
-                  )}
 
                 {/* Post Content */}
                 <style>{`
@@ -412,29 +417,61 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             <div className="mt-16 pt-12 border-t border-gray-200">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Related Posts</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {relatedPosts.map((relatedPost) => (
-                  <Link key={relatedPost.id} href={`/posts/${relatedPost.slug}`}>
-                    <article className="group bg-white rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                {relatedPosts.map((relatedPost) => {
+                  const preview = (relatedPost as any).excerpt || relatedPost.content.replace(/<[^>]*>/g, '').substring(0, 140) + '...';
+                  return (
+                    <article key={relatedPost.id} className="rounded-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full bg-white">
+                      {/* Featured Image */}
                       {relatedPost.featured_image_url && (
-                        <div className="relative h-40 bg-gray-200 overflow-hidden">
-                          <img
-                            src={relatedPost.featured_image_url}
-                            alt={relatedPost.title}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                          />
-                        </div>
+                        <Link href={`/posts/${relatedPost.slug}`}>
+                          <div className="relative h-48 bg-gray-200 overflow-hidden group">
+                            <img
+                              src={relatedPost.featured_image_url}
+                              alt={relatedPost.title}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            />
+                            {/* Glossy Effect */}
+                            <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent pointer-events-none"></div>
+                          </div>
+                        </Link>
                       )}
-                      <div className="p-5">
-                        <h3 className="text-lg font-bold text-gray-900 group-hover:text-teal-600 transition-colors line-clamp-2 mb-3">
-                          {relatedPost.title}
-                        </h3>
-                        <p className="text-xs text-gray-500">
-                          {format(new Date(relatedPost.created_at), "MMM dd, yyyy")}
-                        </p>
+
+                      {/* Content */}
+                      <div className="p-5 flex flex-col flex-grow">
+                        {/* Title */}
+                        <Link href={`/posts/${relatedPost.slug}`}>
+                          <h3 className="text-lg font-bold text-gray-900 mb-3 hover:text-blue-600 transition-colors line-clamp-3">
+                            {relatedPost.title}
+                          </h3>
+                        </Link>
+
+                        {/* Preview Text */}
+                        {preview && (
+                          <p className="text-sm text-gray-600 mb-4 line-clamp-3 flex-grow">
+                            {preview}
+                          </p>
+                        )}
+
+                        {/* Meta Info */}
+                        <div className="flex items-center justify-between text-xs text-gray-500 mb-4 pb-3 border-t border-gray-100 pt-3">
+                          <span>
+                            By <span className="font-medium text-gray-700">{relatedPost.author?.first_name && relatedPost.author?.last_name ? `${relatedPost.author.first_name} ${relatedPost.author.last_name}` : relatedPost.author?.email || "Author"}</span>
+                          </span>
+                          <span>
+                            {format(new Date(relatedPost.created_at), "MMM dd, yyyy")}
+                          </span>
+                        </div>
+
+                        {/* Read Button */}
+                        <Link href={`/posts/${relatedPost.slug}`}>
+                          <Button className="w-full gap-2 text-white rounded-sm font-semibold shadow-md transition-all duration-200 hover:shadow-lg active:scale-95 hover:opacity-90" style={{ backgroundColor: "#690031" }}>
+                            Read
+                          </Button>
+                        </Link>
                       </div>
                     </article>
-                  </Link>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}

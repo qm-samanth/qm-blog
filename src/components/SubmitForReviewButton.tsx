@@ -63,8 +63,8 @@ export function SubmitForReviewButton({ postId }: { postId: string }) {
 
   if (loadingReviewers || reviewers.length === 0) {
     return (
-      <Button variant="outline" disabled size="sm" className="gap-2">
-        <Send className="h-4 w-4" />
+      <Button variant="outline" disabled size="lg" className="border-2 px-6 py-3" style={{ borderColor: "#690031", color: "#690031" }}>
+        <Send className="h-5 w-5 mr-2" />
         Submit for Review
       </Button>
     );
@@ -73,14 +73,14 @@ export function SubmitForReviewButton({ postId }: { postId: string }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
-          <Send className="h-4 w-4" />
+        <Button variant="outline" size="lg" className="border-2 px-6 py-3" style={{ borderColor: "#690031", color: "#690031" }}>
+          <Send className="h-5 w-5 mr-2" />
           Submit for Review
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Submit Post for Review</AlertDialogTitle>
+          <AlertDialogTitle className="text-gray-900">Submit Post for Review</AlertDialogTitle>
           <AlertDialogDescription>
             Select a reviewer to review your post. The reviewer will be notified.
           </AlertDialogDescription>
@@ -92,6 +92,13 @@ export function SubmitForReviewButton({ postId }: { postId: string }) {
           </div>
         )}
 
+        <style>{`
+          #reviewer:focus {
+            border-color: #690031;
+            box-shadow: 0 0 0 3px rgba(107, 0, 49, 0.1);
+          }
+        `}</style>
+
         <div>
           <label htmlFor="reviewer" className="block text-sm font-medium text-gray-700 mb-2">
             Select Reviewer
@@ -100,7 +107,7 @@ export function SubmitForReviewButton({ postId }: { postId: string }) {
             id="reviewer"
             value={selectedReviewerId}
             onChange={(e) => setSelectedReviewerId(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           >
             {reviewers.map((reviewer) => (
               <option key={reviewer.id} value={reviewer.id}>
@@ -115,7 +122,8 @@ export function SubmitForReviewButton({ postId }: { postId: string }) {
           <AlertDialogAction
             onClick={handleSubmit}
             disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="text-white"
+            style={{ backgroundColor: "#690031" }}
           >
             {loading ? "Submitting..." : "Submit"}
           </AlertDialogAction>
