@@ -47,7 +47,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ backgroundColor: "#fbf7f4" }}>
         <Navbar />
         <main className="container mx-auto px-4 py-8">
           <div className="text-center">Loading dashboard...</div>
@@ -57,7 +57,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: "#fbf7f4" }}>
       <Navbar />
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
@@ -67,30 +67,30 @@ export default function DashboardPage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-white rounded-lg p-6">
             <p className="text-sm font-medium text-gray-600">Total Posts</p>
-            <p className="text-3xl font-bold text-gray-900 mt-2">
+            <p className="text-5xl font-bold text-gray-900 mt-2">
               {stats && stats.draft + stats.pending + stats.published + stats.rejected}
             </p>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-white rounded-lg p-6">
             <p className="text-sm font-medium text-gray-600">Published</p>
-            <p className="text-3xl font-bold text-green-600 mt-2">
+            <p className="text-5xl font-bold text-green-600 mt-2">
               {stats?.published || 0}
             </p>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-white rounded-lg p-6">
             <p className="text-sm font-medium text-gray-600">Pending Review</p>
-            <p className="text-3xl font-bold text-yellow-600 mt-2">
+            <p className="text-5xl font-bold text-yellow-600 mt-2">
               {stats?.pending || 0}
             </p>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-white rounded-lg p-6">
             <p className="text-sm font-medium text-gray-600">Drafts</p>
-            <p className="text-3xl font-bold text-blue-600 mt-2">
+            <p className="text-5xl font-bold text-blue-600 mt-2">
               {stats?.draft || 0}
             </p>
           </div>
@@ -98,11 +98,11 @@ export default function DashboardPage() {
 
         {/* Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-white rounded-lg p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
             <div className="space-y-3">
               <Link href="/posts/create" className="block">
-                <Button className="w-full justify-start">
+                <Button className="w-full justify-start text-white" style={{ backgroundColor: "#690031" }}>
                   <Plus className="h-4 w-4 mr-2" />
                   Create New Post
                 </Button>
@@ -116,9 +116,14 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
+          <div className="bg-white rounded-lg p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Account Info</h2>
             <div className="space-y-3 text-sm text-gray-800">
+              <div>
+                <strong>Name:</strong> {((session?.user as any)?.firstName && (session?.user as any)?.lastName) 
+                  ? `${(session?.user as any)?.firstName} ${(session?.user as any)?.lastName}`
+                  : "Not set"}
+              </div>
               <div>
                 <strong>Email:</strong> {session?.user?.email}
               </div>
