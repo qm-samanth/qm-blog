@@ -6,7 +6,7 @@ import { ArrowLeft, Edit2 } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/db";
 import { posts, postTags, tags } from "@/db/schema";
-import { eq, and, inArray, ne } from "drizzle-orm";
+import { eq, and, inArray, ne, desc } from "drizzle-orm";
 import { format } from "date-fns";
 import { auth } from "@/auth";
 import { DeletePostButton } from "@/components/DeletePostButton";
@@ -47,6 +47,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   let postTagsList: Tag[] = [];
   let allTags: Tag[] = [];
   let relatedPosts: Post[] = [];
+  let latestPosts: Post[] = [];
 
   try {
     console.log("=== PostPage Debug ===");
@@ -126,6 +127,20 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           relatedPosts = relatedPostsData as Post[];
         }
       }
+      
+      // Fetch latest published posts (excluding current post)
+      const latestPostsData = await db.query.posts.findMany({
+        where: and(
+          ne(posts.id, post.id),
+          eq(posts.status, "PUBLISHED")
+        ),
+        orderBy: [desc(posts.created_at)],
+        limit: 3,
+        with: {
+          author: true,
+        },
+      });
+      latestPosts = latestPostsData as Post[];
       
       // Check permissions
       const isAuthor = session?.user?.id === post.author_id;
@@ -298,6 +313,29 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             {/* Sidebar - 1 column */}
             <div className="lg:col-span-1">
               <div className="sticky top-8 space-y-6">
+                {/* Post Info Widget */}
+                <div className="bg-white rounded-lg p-6 shadow-sm">
+                  <h3 className="text-lg font-bold mb-4 pb-3 border-b-2" style={{ color: "#690031", borderBottomColor: "#690031" }}>
+                    Post Info
+                  </h3>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between items-start gap-4">
+                      <div>
+                        <p className="text-gray-500 uppercase text-xs font-semibold">Author</p>
+                        <p className="text-gray-900 font-medium mt-1">
+                          {post.author?.first_name && post.author?.last_name 
+                            ? `${post.author.first_name} ${post.author.last_name}` 
+                            : post.author?.email || "Unknown"}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-gray-500 uppercase text-xs font-semibold">Published</p>
+                        <p className="text-gray-900 font-medium mt-1">{format(new Date(post.created_at), "MMM dd, yyyy")}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Tags Sidebar */}
                 {allTags.length > 0 && (
                   <div className="bg-white rounded-lg p-6 shadow-sm">
@@ -326,26 +364,42 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                   </div>
                 )}
 
-                {/* Related Info Widget */}
-                <div className="bg-white rounded-lg p-6 shadow-sm">
-                  <h3 className="text-lg font-bold mb-4 pb-3 border-b-2" style={{ color: "#690031", borderBottomColor: "#690031" }}>
-                    Post Info
-                  </h3>
-                  <div className="space-y-3 text-sm">
-                    <div>
-                      <p className="text-gray-500 uppercase text-xs font-semibold">Author</p>
-                      <p className="text-gray-900 font-medium mt-1">
-                        {post.author?.first_name && post.author?.last_name 
-                          ? `${post.author.first_name} ${post.author.last_name}` 
-                          : post.author?.email || "Unknown"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500 uppercase text-xs font-semibold">Published</p>
-                      <p className="text-gray-900 font-medium mt-1">{format(new Date(post.created_at), "MMM dd, yyyy")}</p>
+                {/* Latest Posts Section */}
+                {latestPosts.length > 0 && (
+                  <div className="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 className="text-lg font-bold mb-4 pb-3 border-b-2" style={{ color: "#690031", borderBottomColor: "#690031" }}>
+                      Latest Posts
+                    </h3>
+                    <div className="space-y-8">
+                      {latestPosts.map((latestPost) => {
+                        const preview = (latestPost as any).excerpt || latestPost.content.replace(/<[^>]*>/g, '').substring(0, 80) + '...';
+                        return (
+                          <Link key={latestPost.id} href={`/posts/${latestPost.slug}`}>
+                            <div className="flex gap-3 p-3 rounded-lg hover:opacity-80 transition cursor-pointer mb-6" style={{ backgroundColor: "#fbf7f4" }}>
+                              {latestPost.featured_image_url && (
+                                <div className="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden bg-gray-200">
+                                  <img 
+                                    src={latestPost.featured_image_url} 
+                                    alt={latestPost.title}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                              )}
+                              <div className="flex-grow min-w-0">
+                                <h4 className="font-semibold text-gray-900 line-clamp-2 text-sm">
+                                  {latestPost.title}
+                                </h4>
+                                <p className="text-xs text-gray-600 line-clamp-2 mt-1">
+                                  {preview}
+                                </p>
+                              </div>
+                            </div>
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
