@@ -15,6 +15,8 @@ declare module "next-auth" {
       id: string;
       email: string;
       role: UserRole;
+      firstName?: string | null;
+      lastName?: string | null;
     };
   }
 
@@ -22,6 +24,8 @@ declare module "next-auth" {
     id: string;
     email: string;
     role: UserRole;
+    firstName?: string | null;
+    lastName?: string | null;
   }
 }
 
@@ -30,6 +34,8 @@ declare module "next-auth/jwt" {
     id: string;
     role: UserRole;
     email: string;
+    firstName?: string | null;
+    lastName?: string | null;
   }
 }
 
@@ -67,6 +73,8 @@ export const config = {
             id: user.id,
             email: user.email,
             role: user.role as UserRole,
+            firstName: user.first_name,
+            lastName: user.last_name,
           };
         } catch (error) {
           throw new Error(
@@ -83,7 +91,9 @@ export const config = {
         token.id = user.id;
         token.role = user.role;
         token.email = user.email;
-        console.log("JWT Updated token:", { id: token.id, role: token.role, email: token.email });
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
+        console.log("JWT Updated token:", { id: token.id, role: token.role, email: token.email, firstName: token.firstName, lastName: token.lastName });
       }
       return token;
     },
@@ -93,7 +103,9 @@ export const config = {
         session.user.id = token.id as string;
         session.user.role = token.role as UserRole;
         session.user.email = token.email as string;
-        console.log("Session Updated user:", { id: session.user.id, role: session.user.role, email: session.user.email });
+        session.user.firstName = token.firstName as string | null;
+        session.user.lastName = token.lastName as string | null;
+        console.log("Session Updated user:", { id: session.user.id, role: session.user.role, email: session.user.email, firstName: session.user.firstName, lastName: session.user.lastName });
       }
       return session;
     },
