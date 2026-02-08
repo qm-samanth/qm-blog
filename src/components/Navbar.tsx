@@ -11,15 +11,18 @@ export function Navbar() {
   return (
     <header style={{ backgroundColor: "#690031" }} className="shadow-sm">
       <nav className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/" className="flex items-center">
-          <img 
-            src="https://qualminds.com/images/QM_logo.png" 
-            alt="QM Logo" 
-            className="h-4"
-          />
-        </Link>
+        <div></div>
 
         <div className="flex items-center gap-4">
+          {/* Logo */}
+          <Link href="/" className="flex items-center">
+            <img 
+              src="https://qualminds.com/images/QM_logo.png" 
+              alt="QM Logo" 
+              className="h-4"
+            />
+          </Link>
+
           {/* Social Media Icons */}
           <div className="flex items-center gap-3">
             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-gray-200 transition">
