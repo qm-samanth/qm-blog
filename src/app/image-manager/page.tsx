@@ -248,7 +248,7 @@ export default function ImageManagerPage() {
 
   const displayImages = selectedFolder
     ? images.filter((img) => img.folder_id === selectedFolder.id)
-    : images.filter((img) => !img.folder_id);
+    : images;
 
   if (loading) {
     return (
