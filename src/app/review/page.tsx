@@ -11,7 +11,8 @@ import type { Post, UserRole } from "@/types";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle, XCircle, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export default function ReviewPage() {
   const { data: session, status } = useSession();
@@ -103,6 +104,10 @@ export default function ReviewPage() {
     <div className="min-h-screen" style={{ backgroundColor: "#fbf7f4" }}>
       <Navbar />
       <main className="container mx-auto px-4 py-8">
+        <Link href="/admin" className="flex items-center gap-2 mb-8 hover:opacity-80 transition" style={{ color: "#690031" }}>
+          <ArrowLeft className="h-4 w-4" />
+          Back to Dashboard
+        </Link>
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Review Queue</h1>
           <p className="text-gray-600">

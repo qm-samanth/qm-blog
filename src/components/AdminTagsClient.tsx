@@ -141,12 +141,18 @@ export function AdminTagsClient() {
 
   return (
     <div className="space-y-6">
+      <style>{`
+        .table-row-hover:hover {
+          background-color: #f5dbc6;
+        }
+      `}</style>
       {error && (
-        <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded flex items-start justify-between">
+        <div className="p-4 rounded flex items-start justify-between" style={{ backgroundColor: "#f0e6eb", color: "#690031", border: "1px solid #690031" }}>
           <span>{error}</span>
           <button
             onClick={() => setError(null)}
-            className="text-red-700 hover:text-red-900"
+            className="hover:opacity-70"
+            style={{ color: "#690031" }}
           >
             <X className="h-5 w-5" />
           </button>
@@ -154,11 +160,12 @@ export function AdminTagsClient() {
       )}
 
       {success && (
-        <div className="p-4 bg-green-100 border border-green-400 text-green-700 rounded flex items-start justify-between">
+        <div className="p-4 rounded flex items-start justify-between" style={{ backgroundColor: "#f0e6eb", color: "#690031", border: "1px solid #690031" }}>
           <span>{success}</span>
           <button
             onClick={() => setSuccess(null)}
-            className="text-green-700 hover:text-green-900"
+            className="hover:opacity-70"
+            style={{ color: "#690031" }}
           >
             <X className="h-5 w-5" />
           </button>
@@ -166,8 +173,8 @@ export function AdminTagsClient() {
       )}
 
       {/* Create New Tag Form */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+      <div className="bg-white rounded-lg p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4 pb-3 flex items-center gap-2 border-b-2" style={{ color: "#690031", borderBottomColor: "#690031" }}>
           <Plus className="h-5 w-5" />
           Create New Tag
         </h2>
@@ -177,12 +184,14 @@ export function AdminTagsClient() {
             value={newTagName}
             onChange={(e) => setNewTagName(e.target.value)}
             placeholder="Enter tag name..."
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2"
+            style={{ focusRingColor: "#690031" }}
           />
           <Button
             type="submit"
             disabled={creating || !newTagName.trim()}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="text-white"
+            style={{ backgroundColor: "#690031" }}
           >
             {creating ? "Creating..." : "Create"}
           </Button>
@@ -190,9 +199,9 @@ export function AdminTagsClient() {
       </div>
 
       {/* Tags List */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">
+      <div className="bg-white rounded-lg overflow-hidden">
+        <div className="p-6 border-b-2" style={{ borderBottomColor: "#690031" }}>
+          <h2 className="text-xl font-semibold text-gray-900" style={{ color: "#690031" }}>
             All Tags ({tags.length})
           </h2>
         </div>
@@ -204,18 +213,18 @@ export function AdminTagsClient() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead style={{ backgroundColor: "#f5dbc6" }}>
                 <tr>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-left text-sm font-semibold" style={{ color: "#690031" }}>
                     Name
                   </th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-left text-sm font-semibold" style={{ color: "#690031" }}>
                     Slug
                   </th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-left text-sm font-semibold" style={{ color: "#690031" }}>
                     Created
                   </th>
-                  <th className="px-6 py-3 text-right text-sm font-semibold text-gray-700">
+                  <th className="px-6 py-3 text-right text-sm font-semibold" style={{ color: "#690031" }}>
                     Actions
                   </th>
                 </tr>
@@ -224,7 +233,7 @@ export function AdminTagsClient() {
                 {tags.map((tag) => (
                   <tr
                     key={tag.id}
-                    className="border-b border-gray-200 hover:bg-gray-50 transition"
+                    className="border-b border-gray-200 transition table-row-hover"
                   >
                     <td className="px-6 py-4">
                       {editing === tag.id ? (
@@ -232,7 +241,8 @@ export function AdminTagsClient() {
                           type="text"
                           value={editingTagName}
                           onChange={(e) => setEditingTagName(e.target.value)}
-                          className="px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2"
+                          style={{ focusRingColor: "#690031" }}
                           autoFocus
                         />
                       ) : (
@@ -242,7 +252,7 @@ export function AdminTagsClient() {
                       )}
                     </td>
                     <td className="px-6 py-4 text-gray-600">
-                      <code className="text-sm bg-gray-100 px-2 py-1 rounded">
+                      <code className="text-sm px-2 py-1 rounded" style={{ backgroundColor: "#f5dbc6", color: "#690031" }}>
                         {tag.slug}
                       </code>
                     </td>
@@ -257,7 +267,8 @@ export function AdminTagsClient() {
                               onClick={() =>
                                 handleUpdateTag(tag.id)
                               }
-                              className="px-3 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 text-sm font-medium transition"
+                              className="px-3 py-1 rounded text-sm font-medium transition text-white"
+                              style={{ backgroundColor: "#690031" }}
                             >
                               Save
                             </button>
@@ -275,14 +286,16 @@ export function AdminTagsClient() {
                                 setEditing(tag.id);
                                 setEditingTagName(tag.name);
                               }}
-                              className="p-2 text-blue-600 hover:bg-blue-50 rounded transition"
+                              className="p-2 rounded transition"
+                              style={{ color: "#690031" }}
                               title="Edit tag"
                             >
                               <Edit2 className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => handleDeleteTag(tag.id)}
-                              className="p-2 text-red-600 hover:bg-red-50 rounded transition"
+                              className="p-2 rounded transition"
+                              style={{ color: "#690031" }}
                               title="Delete tag"
                             >
                               <Trash2 className="h-4 w-4" />
