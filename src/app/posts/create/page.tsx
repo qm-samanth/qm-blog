@@ -33,10 +33,11 @@ export default function CreatePostPage() {
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
 
-  if (status === "unauthenticated") {
-    router.push("/auth/signin");
-    return null;
-  }
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/");
+    }
+  }, [status, router]);
 
   useEffect(() => {
     async function fetchCategories() {

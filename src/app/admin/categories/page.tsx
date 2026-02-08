@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +33,7 @@ interface Category {
 
 export default function AdminCategoriesPage() {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,10 +42,11 @@ export default function AdminCategoriesPage() {
   const [formData, setFormData] = useState({ name: "", slug: "" });
   const [submitting, setSubmitting] = useState(false);
 
-  // Redirect if not admin
-  if (status === "authenticated" && session?.user.role !== "ADMIN") {
-    redirect("/unauthorized");
-  }
+  useEffect(() => {
+    if (status === "authenticated" && session?.user.role !== "ADMIN") {
+      router.push("/unauthorized");
+    }
+  }, [status, session?.user.role, router]);
 
   useEffect(() => {
     async function fetchCategories() {

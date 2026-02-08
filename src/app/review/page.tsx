@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { PostCard } from "@/components/PostCard";
 import { ReviewPostCard } from "@/components/ReviewPostCard";
 import { getReviewQueue } from "@/lib/posts";
@@ -26,15 +26,19 @@ import {
 
 export default function ReviewPage() {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
-  // Redirect if not REVIEWER or ADMIN
-  if (status === "unauthenticated" || (status === "authenticated" && session?.user.role !== "REVIEWER" && session?.user.role !== "ADMIN")) {
-    redirect("/unauthorized");
-  }
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/");
+    } else if (status === "authenticated" && session?.user.role !== "REVIEWER" && session?.user.role !== "ADMIN") {
+      router.push("/unauthorized");
+    }
+  }, [status, session?.user.role, router]);
 
   useEffect(() => {
     async function fetchQueue() {

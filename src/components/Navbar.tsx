@@ -1,14 +1,21 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
+import { useSession, signOut, signIn } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { LogOut, Settings, LayoutDashboard, Image as ImageIcon, Tag, Facebook, Twitter, Linkedin, Instagram, Lock, ChevronDown, Plus } from "lucide-react";
+import { LogOut, Settings, LayoutDashboard, Image as ImageIcon, Tag, Facebook, Twitter, Linkedin, Instagram, Lock, ChevronDown, Plus, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 export function Navbar() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [signInModalOpen, setSignInModalOpen] = useState(false);
+  const [signInEmail, setSignInEmail] = useState("");
+  const [signInPassword, setSignInPassword] = useState("");
+  const [signInError, setSignInError] = useState("");
+  const [signInLoading, setSignInLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -21,6 +28,33 @@ export function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSignInError("");
+    setSignInLoading(true);
+
+    try {
+      const result = await signIn("credentials", {
+        email: signInEmail,
+        password: signInPassword,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setSignInError(result.error || "Invalid email or password");
+      } else {
+        setSignInModalOpen(false);
+        setSignInEmail("");
+        setSignInPassword("");
+        router.push("/");
+      }
+    } catch (err) {
+      setSignInError("An error occurred. Please try again.");
+    } finally {
+      setSignInLoading(false);
+    }
+  };
 
   const firstName = (session?.user as any)?.firstName;
   const lastName = (session?.user as any)?.lastName;
@@ -169,12 +203,100 @@ export function Navbar() {
               )}
             </div>
           ) : (
-            <Link href="/auth/signin">
-              <Button style={{ backgroundColor: "#f5dbc6", color: "#690031" }} className="font-bold hover:opacity-90 px-4 py-1 rounded-sm h-9">Sign In</Button>
-            </Link>
+            <button
+              onClick={() => setSignInModalOpen(true)}
+              style={{ backgroundColor: "#f5dbc6", color: "#690031" }}
+              className="font-bold hover:opacity-90 px-4 py-1 rounded-sm h-9"
+            >
+              Sign In
+            </button>
           )}
         </div>
       </nav>
+
+      {/* Sign In Modal */}
+      {signInModalOpen && (
+        <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-2xl max-w-md w-full relative overflow-hidden">
+            {/* Close Button */}
+            <button
+              onClick={() => {
+                setSignInModalOpen(false);
+                setSignInError("");
+                setSignInEmail("");
+                setSignInPassword("");
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition z-10"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            {/* Form Section */}
+            <div className="p-8 space-y-6">
+              {/* Title and Subtitle */}
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back!</h2>
+                <p className="text-sm text-gray-600">Enter account details to log in</p>
+              </div>
+
+              {signInError && (
+                <div className="p-3 rounded text-sm" style={{ backgroundColor: "#f0e6eb", color: "#690031", border: "1px solid #690031" }}>
+                  {signInError}
+                </div>
+              )}
+
+              <form onSubmit={handleSignIn} className="space-y-5">
+                <div>
+                  <input
+                    id="modal-email"
+                    type="email"
+                    value={signInEmail}
+                    onChange={(e) => setSignInEmail(e.target.value)}
+                    required
+                    autoComplete="off"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 focus:border-transparent text-sm placeholder-gray-500"
+                    style={{ focusRingColor: "#690031" }}
+                    placeholder="example@email.com"
+                  />
+                </div>
+
+                <div>
+                  <input
+                    id="modal-password"
+                    type="password"
+                    value={signInPassword}
+                    onChange={(e) => setSignInPassword(e.target.value)}
+                    required
+                    autoComplete="off"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 focus:border-transparent text-sm placeholder-gray-500"
+                    style={{ focusRingColor: "#690031" }}
+                    placeholder="••••••••"
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={signInLoading}
+                  className="w-full text-white mt-6"
+                  style={{ backgroundColor: "#690031" }}
+                >
+                  {signInLoading ? "Signing in..." : "Sign In"}
+                </Button>
+              </form>
+
+              {/* Demo Credentials */}
+              <div className="pt-4 border-t border-gray-200">
+                <p className="text-xs font-semibold text-gray-600 mb-3">Demo Credentials:</p>
+                <div className="text-xs space-y-2 text-gray-600">
+                  <p><strong>Admin:</strong> admin@example.com / admin123</p>
+                  <p><strong>Reviewer:</strong> reviewer@example.com / reviewer123</p>
+                  <p><strong>User:</strong> user@example.com / user123</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

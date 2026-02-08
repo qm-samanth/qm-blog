@@ -26,7 +26,7 @@ export default async function EditPostPage({ params }: { params: Promise<{ slug:
   const session = await auth();
 
   if (!session?.user) {
-    redirect("/auth/signin");
+    redirect("/");
   }
 
   console.log("Edit page - Session user:", session.user);

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,7 @@ interface ImageRecord {
 
 export default function AdminImagesPage() {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [folders, setFolders] = useState<Folder[]>([]);
   const [images, setImages] = useState<ImageRecord[]>([]);
@@ -37,16 +38,23 @@ export default function AdminImagesPage() {
   const [copying, setCopying] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  // Redirect if not admin
-  if (status === "authenticated" && session?.user.role !== "ADMIN") {
-    redirect("/unauthorized");
-  }
+  useEffect(() => {
+    if (status === "authenticated" && session?.user.role !== "ADMIN") {
+      router.push("/unauthorized");
+    }
+  }, [status, session?.user.role, router]);
 
   useEffect(() => {
-    if (status === "authenticated") {
+    if (status === "unauthenticated") {
+      router.push("/");
+    }
+  }, [status, router]);
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user.role === "ADMIN") {
       fetchData();
     }
-  }, [status]);
+  }, [status, session?.user.role]);
 
   const fetchData = async () => {
     setLoading(true);

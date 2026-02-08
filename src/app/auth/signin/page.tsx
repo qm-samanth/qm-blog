@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Navbar } from "@/components/Navbar";
 
 export default function SignIn() {
   const router = useRouter();
@@ -37,70 +38,81 @@ export default function SignIn() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-blue-600 mb-2">QM Blog</h1>
-          <h2 className="text-xl font-semibold text-gray-900">Sign In</h2>
+    <div className="min-h-screen" style={{ backgroundColor: "#fbf7f4" }}>
+      <Navbar />
+      
+      <main className="container mx-auto px-4 py-8 flex items-center justify-center min-h-[calc(100vh-80px)]">
+        <div className="w-full max-w-md bg-white rounded-lg shadow-2xl overflow-hidden">
+          {/* Form Section */}
+          <div className="p-8 space-y-6">
+            {/* Title and Subtitle */}
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back!</h2>
+              <p className="text-sm text-gray-600">Enter account details to log in</p>
+            </div>
+
+            {/* Error Message */}
+            {error && (
+              <div 
+                className="p-3 rounded text-sm"
+                style={{ backgroundColor: "#f0e6eb", color: "#690031", border: "1px solid #690031" }}
+              >
+                {error}
+              </div>
+            )}
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="off"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 focus:border-transparent text-sm placeholder-gray-500"
+                  style={{ outline: "none" }}
+                  placeholder="example@email.com"
+                />
+              </div>
+
+              <div>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="off"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 focus:border-transparent text-sm placeholder-gray-500"
+                  style={{ outline: "none" }}
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full text-white mt-6"
+                style={{ backgroundColor: "#690031" }}
+              >
+                {loading ? "Signing in..." : "Sign In"}
+              </Button>
+            </form>
+
+            {/* Divider */}
+            <div className="pt-4 border-t border-gray-200">
+              <p className="text-xs font-semibold text-gray-600 mb-3">Demo Credentials:</p>
+              <div className="text-xs space-y-2 text-gray-600">
+                <p><strong>Admin:</strong> admin@example.com / admin123</p>
+                <p><strong>Reviewer:</strong> reviewer@example.com / reviewer123</p>
+                <p><strong>User:</strong> user@example.com / user123</p>
+              </div>
+            </div>
+          </div>
         </div>
-
-        {error && (
-          <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete="off"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="you@example.com"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="off"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="••••••••"
-            />
-          </div>
-
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full"
-          >
-            {loading ? "Signing in..." : "Sign In"}
-          </Button>
-        </form>
-
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <p className="text-sm font-semibold text-gray-900 mb-3">Demo Credentials:</p>
-          <div className="text-xs space-y-2 font-mono text-gray-800">
-            <p><strong className="text-gray-900">Admin:</strong> <span className="text-gray-700">admin@example.com / admin123</span></p>
-            <p><strong className="text-gray-900">Reviewer:</strong> <span className="text-gray-700">reviewer@example.com / reviewer123</span></p>
-            <p><strong className="text-gray-900">User:</strong> <span className="text-gray-700">user@example.com / user123</span></p>
-          </div>
-        </div>
-      </div>
+      </main>
     </div>
   );
 }
