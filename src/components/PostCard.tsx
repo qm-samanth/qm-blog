@@ -114,23 +114,17 @@ export function PostCard({
   const preview = getPlainTextPreview(post.content, 180);
 
   return (
-    <article className="rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-lg transition-shadow overflow-hidden">
+    <article className="rounded-sm shadow-sm hover:shadow-lg transition-shadow overflow-hidden bg-gray-100">
       {/* Image and Title Section */}
       {post.featured_image_url ? (
-        <div className="relative h-64 bg-gray-200 overflow-hidden group">
+        <div className="relative h-80 bg-gray-200 overflow-hidden group">
           <img
             src={post.featured_image_url}
             alt={post.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          {/* Title Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex items-end p-6">
-            <Link href={`/posts/${post.slug}`}>
-              <h2 className="text-2xl font-bold text-white hover:text-blue-200 transition-colors line-clamp-3">
-                {post.title}
-              </h2>
-            </Link>
-          </div>
+          {/* Glossy Effect */}
+          <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent pointer-events-none"></div>
           {/* Status Badge */}
           <div className="absolute top-4 right-4">
             <Badge className={`${statusColors[post.status]} font-semibold`}>
@@ -139,7 +133,7 @@ export function PostCard({
           </div>
         </div>
       ) : (
-        <div className="h-48 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center relative border-b border-gray-200">
+        <div className="h-80 flex items-center justify-center relative bg-gray-100">
           <div className="text-center px-6">
             <Link href={`/posts/${post.slug}`}>
               <h2 className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors">
@@ -168,7 +162,13 @@ export function PostCard({
         </div>
 
         {/* Category Badge */}
-        {post.category && (
+        {posTitle */}
+        <Link href={`/posts/${post.slug}`}>
+          <h2 className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors mb-4">
+            {post.title}
+          </h2>
+        </Link>
+        {/* t.category && (
           <Link
             href={`/category/${post.category.slug}`}
             className="inline-block mb-4"
@@ -181,7 +181,7 @@ export function PostCard({
 
         {/* Preview Text */}
         {preview && (
-          <p className="text-gray-700 mb-4 leading-6 line-clamp-3">
+          <p className="text-gray-700 mb-4 leading-6 line-clamp-7">
             {preview}
           </p>
         )}
@@ -197,40 +197,58 @@ export function PostCard({
         <div className="border-t border-gray-100 my-4"></div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2">
+            {canEdit && (
+              <Link href={`/posts/${post.slug}/edit`}>
+                <Button variant="outline" size="sm" className="gap-2 text-gray-600 hover:bg-gray-50">
+                  <Edit className="h-4 w-4" />
+                  Edit
+                </Button>
+              </Link>
+            )}
+
+            {canDelete && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-2 text-red-600 border-red-200 hover:bg-red-50"
+                    disabled={isDeleting}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Delete
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-gray-900">Delete Post</AlertDialogTitle>
+                    <AlertDialogDescription className="text-gray-600">
+                      Are you sure you want to delete "{post.title}"? This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <div className="flex gap-3">
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDelete}
+                      className="bg-red-600 hover:bg-red-700 text-white"
+                    >
+                      Delete
+                    </AlertDialogAction>
+                  </div>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </div>
+
           <Link href={`/posts/${post.slug}`}>
-            <Button variant="outline" size="sm" className="gap-2 border-blue-200 text-blue-600 hover:bg-blue-50">
+            <Button size="sm" className="gap-2 text-white rounded-sm font-semibold shadow-md transition-all duration-200 hover:shadow-lg active:scale-95 hover:opacity-90 px-4" style={{ backgroundColor: "#690031" }}>
               <Eye className="h-4 w-4" />
-              Read Full
+              Read
             </Button>
           </Link>
-
-          {canEdit && (
-            <Link href={`/posts/${post.slug}/edit`}>
-              <Button variant="outline" size="sm" className="gap-2 text-gray-600 hover:bg-gray-50">
-                <Edit className="h-4 w-4" />
-                Edit
-              </Button>
-            </Link>
-          )}
-
-          {canDelete && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-2 text-red-600 border-red-200 hover:bg-red-50"
-                  disabled={isDeleting}
-                >
-                  <Trash2 className="h-4 w-4" />
-                  Delete
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="text-gray-900">Delete Post</AlertDialogTitle>
-                  <AlertDialogDescription className="text-gray-600">
+        </div>
                     Are you sure you want to delete "{post.title}"? This action cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
