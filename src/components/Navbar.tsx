@@ -3,7 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { LogOut, Settings, LayoutDashboard, Image as ImageIcon, Tag, Facebook, Twitter, Linkedin, Instagram, Lock, ChevronDown } from "lucide-react";
+import { LogOut, Settings, LayoutDashboard, Image as ImageIcon, Tag, Facebook, Twitter, Linkedin, Instagram, Lock, ChevronDown, Plus } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 export function Navbar() {
@@ -55,6 +55,19 @@ export function Navbar() {
               <Instagram className="h-4 w-4" />
             </a>
           </div>
+
+          {/* Create Post Button - Only for logged in users */}
+          {session?.user && session.user.role === "USER" && (
+            <Link href="/posts/create">
+              <Button 
+                style={{ backgroundColor: "#f5dbc6", color: "#690031" }} 
+                className="font-bold hover:opacity-90 px-3 py-1 rounded-sm h-9 flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Create Post
+              </Button>
+            </Link>
+          )}
 
           {/* User Section */}
           {session?.user ? (

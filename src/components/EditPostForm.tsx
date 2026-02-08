@@ -174,7 +174,7 @@ export function EditPostForm({ post }: { post: Post }) {
       )}
 
       {isPublished && (
-        <div className="mb-6 p-4 bg-blue-100 border border-blue-400 text-blue-700 rounded">
+        <div className="mb-6 p-4 rounded" style={{ backgroundColor: "#f0e6eb", borderLeft: "4px solid #690031", color: "#690031" }}>
           <strong>Note:</strong> Editing a published post will set it back to <strong>DRAFT</strong> status. You'll need to submit it for review again before it can be published.
         </div>
       )}
@@ -190,7 +190,8 @@ export function EditPostForm({ post }: { post: Post }) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter post title"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-transparent focus:border-transparent"
+            style={{ outline: "none" }}
             required
           />
         </div>
@@ -208,7 +209,8 @@ export function EditPostForm({ post }: { post: Post }) {
               setSlugTouched(true);
             }}
             placeholder="auto-generated from title"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-transparent focus:border-transparent"
+            style={{ outline: "none" }}
             required
           />
           <p className="text-xs text-gray-500 mt-1">URL will be: /posts/{slug || "your-slug"}</p>
@@ -225,7 +227,8 @@ export function EditPostForm({ post }: { post: Post }) {
             placeholder="A brief summary of your post (2-3 sentences)"
             maxLength={200}
             rows={3}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-transparent focus:border-transparent resize-none"
+            style={{ outline: "none" }}
           />
           <p className="text-xs text-gray-500 mt-1">{excerpt.length}/200 characters</p>
         </div>
@@ -238,7 +241,8 @@ export function EditPostForm({ post }: { post: Post }) {
             id="category"
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-transparent focus:border-transparent"
+            style={{ outline: "none" }}
             disabled={catsLoading}
             required
           >
@@ -269,7 +273,8 @@ export function EditPostForm({ post }: { post: Post }) {
             <button
               type="button"
               onClick={() => setShowPreview(true)}
-              className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              className="px-3 py-1 text-xs text-white rounded hover:opacity-80 transition"
+              style={{ backgroundColor: "#690031" }}
             >
               Preview
             </button>
@@ -287,7 +292,6 @@ export function EditPostForm({ post }: { post: Post }) {
             <svg className="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            <span className="text-sm text-gray-600">Click to upload an image (will be inserted into content)</span>
             <input
               type="file"
               accept="image/*"
@@ -305,7 +309,12 @@ export function EditPostForm({ post }: { post: Post }) {
         </div>
 
         <div className="flex gap-4">
-          <Button type="submit" disabled={saving} className="flex-1">
+          <Button 
+            type="submit" 
+            disabled={saving} 
+            className="flex-1 text-white"
+            style={{ backgroundColor: "#690031" }}
+          >
             {saving ? "Saving..." : "Save Changes"}
           </Button>
           <Link href={`/posts/${post.slug}`} className="flex-1">

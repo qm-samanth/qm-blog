@@ -7,8 +7,6 @@ import { PostGridCard } from "@/components/PostGridCard";
 import { getPostsByRole } from "@/lib/posts";
 import type { Post, UserRole, Category } from "@/types";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 
 export function SmartFeed() {
   const { data: session, status } = useSession();
@@ -102,17 +100,6 @@ export function SmartFeed() {
               {cat.name}
             </button>
           ))}
-        </div>
-      )}
-
-      {session?.user?.role === "USER" && (
-        <div className="flex justify-center mb-4">
-          <Link href="/posts/create">
-            <Button className="gap-2 bg-blue-600 hover:bg-blue-700 px-6">
-              <Plus className="h-4 w-4" />
-              Write New Post
-            </Button>
-          </Link>
         </div>
       )}
 

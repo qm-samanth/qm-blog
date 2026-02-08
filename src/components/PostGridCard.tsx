@@ -135,7 +135,7 @@ export function PostGridCard({
           <div className="flex items-center gap-2">
             {canEdit && (
               <Link href={`/posts/${post.slug}/edit`} className="flex-1">
-                <Button variant="outline" size="sm" className="w-full gap-2 border-gray-300 text-gray-700 hover:bg-gray-50">
+                <Button size="sm" className="w-full gap-1 px-2 py-1 rounded-sm border-2 transition-all hover:opacity-80" style={{ borderColor: "#690031", color: "#690031" }} variant="outline">
                   <Edit className="h-3.5 w-3.5" />
                   <span className="text-xs">Edit</span>
                 </Button>
@@ -146,9 +146,10 @@ export function PostGridCard({
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
-                    variant="outline"
                     size="sm"
-                    className="flex-1 gap-2 border-red-300 text-red-600 hover:bg-red-50"
+                    className="flex-1 gap-1 px-2 py-1 rounded-sm border-2 transition-all hover:opacity-80"
+                    style={{ borderColor: "#690031", color: "#690031" }}
+                    variant="outline"
                     disabled={isDeleting}
                   >
                     <Trash2 className="h-3.5 w-3.5" />

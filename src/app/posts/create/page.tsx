@@ -181,8 +181,8 @@ export default function CreatePostPage() {
               </div>
             )}
 
-            <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-              <p className="text-sm text-gray-600">
+            <div className="mb-6 p-4 rounded" style={{ backgroundColor: "#f0e6eb", borderLeft: "4px solid #690031", color: "#690031" }}>
+              <p className="text-sm">
                 <strong>Note:</strong> Posts are created as DRAFT by default. You can submit them for review later.
               </p>
             </div>
@@ -198,7 +198,8 @@ export default function CreatePostPage() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Enter post title"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-transparent focus:border-transparent"
+                  style={{ outline: "none" }}
                   required
                 />
               </div>
@@ -216,7 +217,8 @@ export default function CreatePostPage() {
                     setSlugTouched(true);
                   }}
                   placeholder="auto-generated from title"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-transparent focus:border-transparent"
+                  style={{ outline: "none" }}
                   required
                 />
                 <p className="text-xs text-gray-500 mt-1">URL will be: /posts/{slug || "your-slug"}</p>
@@ -233,7 +235,9 @@ export default function CreatePostPage() {
                   placeholder="A brief summary of your post (2-3 sentences)"
                   maxLength={200}
                   rows={3}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-transparent focus:border-transparent resize-none"
+                  style={{ outline: "none" }}
+                  style={{ outline: "none" }}
                 />
                 <p className="text-xs text-gray-500 mt-1">{excerpt.length}/200 characters</p>
               </div>
@@ -246,7 +250,8 @@ export default function CreatePostPage() {
                   id="category"
                   value={categoryId}
                   onChange={(e) => setCategoryId(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-transparent focus:border-transparent"
+                  style={{ outline: "none" }}
                   disabled={catsLoading}
                   required
                 >

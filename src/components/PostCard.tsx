@@ -201,7 +201,7 @@ export function PostCard({
           <div className="flex items-center gap-2">
             {canEdit && (
               <Link href={`/posts/${post.slug}/edit`}>
-                <Button variant="outline" size="sm" className="gap-2 text-gray-600 hover:bg-gray-50">
+                <Button size="sm" className="gap-1 px-3 py-1 rounded-sm border-2 transition-all hover:opacity-80" style={{ borderColor: "#690031", color: "#690031" }} variant="outline">
                   <Edit className="h-4 w-4" />
                   Edit
                 </Button>
@@ -212,9 +212,10 @@ export function PostCard({
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button
-                    variant="outline"
                     size="sm"
-                    className="gap-2 text-red-600 border-red-200 hover:bg-red-50"
+                    className="gap-1 px-3 py-1 rounded-sm border-2 transition-all hover:opacity-80"
+                    style={{ borderColor: "#690031", color: "#690031" }}
+                    variant="outline"
                     disabled={isDeleting}
                   >
                     <Trash2 className="h-4 w-4" />

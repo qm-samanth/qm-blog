@@ -72,14 +72,14 @@ export default async function EditPostPage({ params }: { params: Promise<{ slug:
 
   if (error || !post) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ backgroundColor: "#fbf7f4" }}>
         <Navbar />
         <main className="container mx-auto px-4 py-8">
-          <Link href="/" className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6">
+          <Link href="/dashboard" className="flex items-center gap-2 mb-6 hover:opacity-80 transition" style={{ color: "#690031" }}>
             <ArrowLeft className="h-4 w-4" />
-            Back to Feed
+            Back to Dashboard
           </Link>
-          <div className="bg-white rounded-lg border border-gray-200 p-8">
+          <div className="bg-white rounded-lg p-8">
             <p className="text-red-600">{error || "Post not found"}</p>
           </div>
         </main>
@@ -88,16 +88,16 @@ export default async function EditPostPage({ params }: { params: Promise<{ slug:
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: "#fbf7f4" }}>
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-3xl">
-          <Link href={`/posts/${post.slug}`} className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6">
+        <div>
+          <Link href={`/posts/${post.slug}`} className="flex items-center gap-2 mb-6 hover:opacity-80 transition" style={{ color: "#690031" }}>
             <ArrowLeft className="h-4 w-4" />
             Back to Post
           </Link>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-8">
+          <div className="bg-white rounded-lg p-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-8">Edit Post</h1>
             <EditPostForm post={post} />
           </div>
