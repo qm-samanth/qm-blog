@@ -163,16 +163,16 @@ export default function CreatePostPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: "#fbf7f4" }}>
       <Navbar />
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-3xl">
-          <Link href="/" className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6">
+        <div>
+          <Link href="/dashboard" className="flex items-center gap-2 mb-6 hover:opacity-80 transition" style={{ color: "#690031" }}>
             <ArrowLeft className="h-4 w-4" />
-            Back to Feed
+            Back to Dashboard
           </Link>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-8">
+          <div className="bg-white rounded-lg p-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-8">Create New Post</h1>
 
             {error && (
@@ -180,6 +180,12 @@ export default function CreatePostPage() {
                 {error}
               </div>
             )}
+
+            <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+              <p className="text-sm text-gray-600">
+                <strong>Note:</strong> Posts are created as DRAFT by default. You can submit them for review later.
+              </p>
+            </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
@@ -272,7 +278,8 @@ export default function CreatePostPage() {
                   <button
                     type="button"
                     onClick={() => setShowPreview(true)}
-                    className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                    className="px-3 py-1 text-xs text-white rounded hover:opacity-90 transition"
+                    style={{ backgroundColor: "#690031" }}
                   >
                     Preview
                   </button>
@@ -284,34 +291,11 @@ export default function CreatePostPage() {
                 />
               </div>
 
-              {/* Image Upload Section */}
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
-                <label className="cursor-pointer flex flex-col items-center gap-2">
-                  <svg className="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                  <span className="text-sm text-gray-600">Click to upload an image (will be inserted into content)</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    disabled={uploading}
-                    className="hidden"
-                  />
-                </label>
-                {uploading && <p className="text-center text-sm text-gray-600 mt-2">Uploading...</p>}
-                {copiedUrl && (
-                  <p className="text-center text-sm text-green-600 mt-2 flex items-center justify-center gap-2">
-                    <Check className="h-4 w-4" /> Image inserted into content!
-                  </p>
-                )}
-              </div>
-
               <div className="flex gap-4">
-                <Button type="submit" disabled={loading} className="flex-1">
+                <Button type="submit" disabled={loading} className="flex-1 text-white" style={{ backgroundColor: "#690031" }}>
                   {loading ? "Creating..." : "Create Post"}
                 </Button>
-                <Link href="/" className="flex-1">
+                <Link href="/dashboard" className="flex-1">
                   <Button type="button" variant="outline" className="w-full">
                     Cancel
                   </Button>
@@ -325,12 +309,6 @@ export default function CreatePostPage() {
               content={content}
               title={title || "Untitled Post"}
             />
-
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-              <p className="text-sm text-gray-600">
-                <strong>Note:</strong> Posts are created as DRAFT by default. You can submit them for review later.
-              </p>
-            </div>
           </div>
         </div>
       </main>
