@@ -26,12 +26,13 @@ export function DeletePostButton({ postId }: { postId: string }) {
   return (
     <Button
       variant="outline"
-      size="sm"
+      size="lg"
       onClick={handleDelete}
       disabled={deleting}
-      className="text-red-600 hover:text-red-700"
+      className="border-2 px-6 py-3"
+      style={{ borderColor: "#690031", color: "#690031" }}
     >
-      <Trash2 className="h-4 w-4 mr-2" />
+      <Trash2 className="h-5 w-5 mr-2" />
       {deleting ? "Deleting..." : "Delete"}
     </Button>
   );

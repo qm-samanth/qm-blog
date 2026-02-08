@@ -208,74 +208,76 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Main Content - 3 columns */}
             <div className="lg:col-span-3">
-              <article className="bg-white rounded-lg p-8 lg:p-10">
-                {/* Header Section */}
-                <div className="mb-8">
-                  <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">{post.title}</h1>
-                  
-                  {/* Meta Info */}
-                  <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-6">
-                    <span>Created {format(new Date(post.created_at), "MMM dd, yyyy")}</span>
-                    {post.updated_at && post.updated_at !== post.created_at && (
-                      <span>Updated {format(new Date(post.updated_at), "MMM dd, yyyy")}</span>
+              <article className="bg-white rounded-lg overflow-hidden">
+                {session?.user && (
+                  <>
+                    {/* Feedback Section - Full Width */}
+                    {(post.status === "REJECTED" || post.status === "PUBLISHED") && post.reviewer_comments && (
+                      <div className="w-full p-4" style={{ backgroundColor: "#f0e6eb", borderBottom: "4px solid #690031" }}>
+                        <p className="text-sm" style={{ color: "#690031" }}>
+                          <span className="font-bold">{post.status === "PUBLISHED" ? "✓ Approval Feedback" : "✗ Rejection Feedback"}:</span> {post.reviewer_comments}
+                        </p>
+                      </div>
                     )}
-                    <span className="inline-block px-3 py-1 bg-teal-100 text-teal-800 rounded-full text-xs font-semibold">
-                      {post.status}
-                    </span>
-                  </div>
 
-                  {/* Edit/Delete Buttons */}
-                  {canEdit && (
-                    <div className="flex gap-2 mb-6">
-                      <Link href={`/posts/${post.slug}/edit`}>
-                        <Button variant="outline" size="sm" className="border-2" style={{ borderColor: "#690031", color: "#690031" }}>
-                          <Edit2 className="h-4 w-4 mr-2" />
-                          Edit
-                        </Button>
-                      </Link>
-                      <DeletePostButton postId={post.id} />
+                    {/* Meta Info with Edit/Delete Buttons */}
+                    <div className="px-8 lg:px-10 pt-6 pb-4 flex flex-wrap items-center justify-between gap-4 text-sm">
+                      <div className="flex flex-wrap items-center gap-4">
+                        <span style={{ color: "#690031" }}>Created {format(new Date(post.created_at), "MMM dd, yyyy")}</span>
+                        {post.updated_at && post.updated_at !== post.created_at && (
+                          <span style={{ color: "#690031" }}>Updated {format(new Date(post.updated_at), "MMM dd, yyyy")}</span>
+                        )}
+                        <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: "#690031", color: "white" }}>
+                          {post.status}
+                        </span>
+                      </div>
+                      {canEdit && (
+                        <div className="flex gap-3">
+                          <Link href={`/posts/${post.slug}/edit`}>
+                            <Button variant="outline" size="lg" className="border-2 px-6 py-3" style={{ borderColor: "#690031", color: "#690031" }}>
+                              <Edit2 className="h-5 w-5 mr-2" />
+                              Edit
+                            </Button>
+                          </Link>
+                          <DeletePostButton postId={post.id} />
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                {/* Featured Image with Title Overlay */}
+                <div className="relative">
+                  {post.featured_image_url && (
+                    <div className="w-full bg-gray-200" style={{ height: "500px" }}>
+                      <img 
+                        src={post.featured_image_url} 
+                        alt="Featured image" 
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   )}
+                  
+                  <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-6" style={{ background: "linear-gradient(to top, rgba(107, 0, 49, 1), rgba(107, 0, 49, 0.3))" }}>
+                    <h1 className="text-2xl lg:text-3xl font-bold text-white mb-2">{post.title}</h1>
+                    <div className="flex justify-between items-end text-white text-sm">
+                      <div>
+                        <p className="opacity-90">By {post.author?.first_name && post.author?.last_name 
+                          ? `${post.author.first_name} ${post.author.last_name}` 
+                          : post.author?.email || "Unknown"}</p>
+                      </div>
+                      <div>
+                        <p className="opacity-90">{format(new Date(post.created_at), "MMM dd, yyyy")}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-8 lg:p-10">
                   
                   {(post.status === "DRAFT" || post.status === "REJECTED") && session?.user?.id === post.author_id && (
                     <SubmitForReviewButton postId={post.id} />
                   )}
-                </div>
-
-                {/* Featured Image */}
-                {post.featured_image_url && (
-                  <div className="my-8 -mx-8 lg:-mx-10">
-                    <img 
-                      src={post.featured_image_url} 
-                      alt="Featured image" 
-                      className="w-full h-96 object-cover"
-                    />
-                  </div>
-                )}
-
-                {/* Feedback Section */}
-                {(post.status === "REJECTED" || post.status === "PUBLISHED") && post.reviewer_comments && (
-                  <div className={`my-6 p-4 rounded-lg border-l-4 ${
-                    post.status === "PUBLISHED"
-                      ? "bg-green-50 border-green-500"
-                      : "bg-red-50 border-red-500"
-                  }`}>
-                    <h3 className={`font-bold mb-2 ${
-                      post.status === "PUBLISHED"
-                        ? "text-green-800"
-                        : "text-red-800"
-                    }`}>
-                      {post.status === "PUBLISHED" ? "✓ Approval Feedback" : "✗ Rejection Feedback"}
-                    </h3>
-                    <p className={`text-sm ${
-                      post.status === "PUBLISHED"
-                        ? "text-green-700"
-                        : "text-red-700"
-                    } whitespace-pre-wrap`}>
-                      {post.reviewer_comments}
-                    </p>
-                  </div>
-                )}
 
                 {/* Post Content */}
                 <style>{`
@@ -307,6 +309,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                 ">
                   <div dangerouslySetInnerHTML={{ __html: displayContent }} />
                 </div>
+                </div>
               </article>
             </div>
 
@@ -314,7 +317,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             <div className="lg:col-span-1">
               <div className="sticky top-8 space-y-6">
                 {/* Post Info Widget */}
-                <div className="bg-white rounded-lg p-6 shadow-sm">
+                <div className="bg-white rounded-lg p-6">
                   <h3 className="text-lg font-bold mb-4 pb-3 border-b-2" style={{ color: "#690031", borderBottomColor: "#690031" }}>
                     Post Info
                   </h3>
@@ -338,7 +341,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 
                 {/* Tags Sidebar */}
                 {allTags.length > 0 && (
-                  <div className="bg-white rounded-lg p-6 shadow-sm">
+                  <div className="bg-white rounded-lg p-6">
                     <h3 className="text-lg font-bold mb-4 pb-3 border-b-2" style={{ color: "#690031", borderBottomColor: "#690031" }}>
                       All Tags
                     </h3>
@@ -366,7 +369,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 
                 {/* Latest Posts Section */}
                 {latestPosts.length > 0 && (
-                  <div className="bg-white rounded-lg p-6 shadow-sm">
+                  <div className="bg-white rounded-lg p-6">
                     <h3 className="text-lg font-bold mb-4 pb-3 border-b-2" style={{ color: "#690031", borderBottomColor: "#690031" }}>
                       Latest Posts
                     </h3>
