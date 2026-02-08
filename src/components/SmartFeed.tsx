@@ -93,7 +93,7 @@ export function SmartFeed() {
               className={`px-4 py-2 rounded-sm text-sm font-medium whitespace-nowrap transition-all ${
                 (cat.id === 0 && selectedCategory === null) || selectedCategory === cat.id
                   ? "text-white"
-                  : "text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200"
+                  : "text-gray-600 hover:text-gray-900 bg-white hover:bg-gray-50"
               }`}
               style={{
                 backgroundColor: ((cat.id === 0 && selectedCategory === null) || selectedCategory === cat.id) ? "#690031" : undefined
@@ -145,7 +145,7 @@ export function SmartFeed() {
         {/* Sidebar */}
         <div className="lg:col-span-1">
           {/* Latest Posts Widget */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm sticky top-8">
+          <div className="bg-white rounded-lg p-6 shadow-sm sticky top-8">
             <h2 className="text-xl font-bold text-gray-900 mb-6 pb-3 border-b-2" style={{ borderColor: "#690031" }}>
               Latest Posts
             </h2>
@@ -154,9 +154,10 @@ export function SmartFeed() {
                 <Link
                   key={post.id}
                   href={`/posts/${post.slug}`}
-                  className="group block"
+                  className="group block rounded p-3 transition-colors hover:opacity-90"
+                  style={{ backgroundColor: "#fdfaf7" }}
                 >
-                  <div className="flex gap-3">
+                  <div className="flex gap-3 items-center">
                     {post.featured_image_url && (
                       <div className="flex-shrink-0 w-16 h-16 rounded overflow-hidden bg-gray-200">
                         <img
@@ -174,6 +175,9 @@ export function SmartFeed() {
                       )}
                       <p className="text-sm font-semibold text-gray-900 transition-colors line-clamp-2 group-hover:text-gray-700" style={{ color: "inherit" }}>
                         {post.title}
+                      </p>
+                      <p className="text-xs text-gray-600 mt-1 line-clamp-1">
+                        {(post as any).excerpt || post.content?.replace(/<[^>]*>/g, '').substring(0, 100).trim() + "..."}
                       </p>
                     </div>
                   </div>

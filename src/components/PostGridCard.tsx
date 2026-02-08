@@ -68,7 +68,7 @@ export function PostGridCard({
   const preview = (post as any).excerpt || getPlainTextPreview(post.content, 140);
 
   return (
-    <article className="rounded-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full bg-gray-100">
+    <article className="rounded-sm overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full bg-white">
       {/* Featured Image */}
       {post.featured_image_url ? (
         <Link href={`/posts/${post.slug}`}>
@@ -88,7 +88,7 @@ export function PostGridCard({
           </div>
         </Link>
       ) : (
-        <div className="h-80 flex items-center justify-center bg-gray-100">
+        <div className="h-80 flex items-center justify-center bg-white">
           <div className="text-center text-gray-400">
             <div className="text-4xl mb-2">📄</div>
           </div>

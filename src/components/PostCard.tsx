@@ -114,7 +114,7 @@ export function PostCard({
   const preview = getPlainTextPreview(post.content, 180);
 
   return (
-    <article className="rounded-sm shadow-sm hover:shadow-lg transition-shadow overflow-hidden bg-gray-100">
+    <article className="rounded-sm shadow-sm hover:shadow-lg transition-shadow overflow-hidden bg-white">
       {/* Image and Title Section */}
       {post.featured_image_url ? (
         <div className="relative h-80 bg-gray-200 overflow-hidden group">
@@ -133,7 +133,7 @@ export function PostCard({
           </div>
         </div>
       ) : (
-        <div className="h-80 flex items-center justify-center relative bg-gray-100">
+        <div className="h-80 flex items-center justify-center relative bg-white">
           <div className="text-center px-6">
             <Link href={`/posts/${post.slug}`}>
               <h2 className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors">
