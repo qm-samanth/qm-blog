@@ -269,6 +269,7 @@ export default function SettingsPage() {
                   value={formData.currentPassword}
                   onChange={handleInputChange}
                   placeholder="Enter your current password"
+                  autoComplete="off"
                   required
                   disabled={loading}
                 />
@@ -285,6 +286,7 @@ export default function SettingsPage() {
                   value={formData.newPassword}
                   onChange={handleInputChange}
                   placeholder="Enter your new password (min 8 characters)"
+                  autoComplete="off"
                   required
                   disabled={loading}
                 />
@@ -301,6 +303,7 @@ export default function SettingsPage() {
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
                   placeholder="Confirm your new password"
+                  autoComplete="off"
                   required
                   disabled={loading}
                 />
