@@ -24,6 +24,12 @@ interface Post {
   featured_image_url?: string;
   created_at: Date;
   updated_at: Date;
+  author?: {
+    id: string;
+    email: string;
+    first_name?: string;
+    last_name?: string;
+  };
 }
 
 interface Tag {
@@ -57,12 +63,18 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
     // Try to find by slug first, then by id (in case it's an old UUID link)
     let result = await db.query.posts.findFirst({
       where: eq(posts.slug, slug),
+      with: {
+        author: true,
+      },
     });
 
     // If not found by slug, try by id (UUID)
     if (!result && slug.includes('-') && slug.length === 36) {
       result = await db.query.posts.findFirst({
         where: eq(posts.id, slug),
+        with: {
+          author: true,
+        },
       });
     }
 
@@ -148,14 +160,14 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 
   if (error || !post) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ backgroundColor: "#fbf7f4" }}>
         <Navbar />
         <main className="container mx-auto px-4 py-8">
-          <Link href="/" className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6">
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition" style={{ color: "#690031" }}>
             <ArrowLeft className="h-4 w-4" />
             Back to Feed
           </Link>
-          <div className="bg-white rounded-lg border border-gray-200 p-8">
+          <div className="bg-white rounded-lg p-8">
             <p className="text-red-600">{error || "Post not found"}</p>
           </div>
         </main>
@@ -169,11 +181,11 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   const displayContent = decodeHTML(post.content);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: "#fbf7f4" }}>
       <Navbar />
       <main className="w-full">
         <div className="container mx-auto px-4 py-8">
-          <Link href="/" className="flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-8">
+          <Link href="/" className="flex items-center gap-2 mb-10 hover:opacity-80 transition" style={{ color: "#690031" }}>
             <ArrowLeft className="h-4 w-4" />
             Back to Feed
           </Link>
@@ -181,7 +193,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Main Content - 3 columns */}
             <div className="lg:col-span-3">
-              <article className="bg-white rounded-lg border border-gray-200 p-8 lg:p-10">
+              <article className="bg-white rounded-lg p-8 lg:p-10">
                 {/* Header Section */}
                 <div className="mb-8">
                   <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">{post.title}</h1>
@@ -201,7 +213,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                   {canEdit && (
                     <div className="flex gap-2 mb-6">
                       <Link href={`/posts/${post.slug}/edit`}>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" className="border-2" style={{ borderColor: "#690031", color: "#690031" }}>
                           <Edit2 className="h-4 w-4 mr-2" />
                           Edit
                         </Button>
@@ -251,7 +263,19 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                 )}
 
                 {/* Post Content */}
-                <div className="prose prose-sm md:prose-base lg:prose-lg max-w-none 
+                <style>{`
+                  .post-content blockquote {
+                    border-left-color: #690031 !important;
+                    background-color: #f0e6eb !important;
+                  }
+                  .post-content a {
+                    color: #690031 !important;
+                  }
+                  .post-content a:hover {
+                    color: #5a002a !important;
+                  }
+                `}</style>
+                <div className="post-content prose prose-sm md:prose-base lg:prose-lg max-w-none 
                   prose-h1:text-4xl prose-h1:font-bold prose-h1:my-6 prose-h1:text-gray-900
                   prose-h2:text-3xl prose-h2:font-bold prose-h2:my-4 prose-h2:text-gray-900
                   prose-h3:text-2xl prose-h3:font-bold prose-h3:my-3 prose-h3:text-gray-900
@@ -259,10 +283,9 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                   prose-ul:list-disc prose-ul:list-inside prose-ul:my-4 prose-ul:space-y-2 prose-ul:text-gray-800
                   prose-ol:list-decimal prose-ol:list-inside prose-ol:my-4 prose-ol:space-y-2 prose-ol:text-gray-800
                   prose-li:text-gray-800
-                  prose-blockquote:border-l-4 prose-blockquote:border-teal-500 prose-blockquote:pl-4 prose-blockquote:my-4 prose-blockquote:italic prose-blockquote:text-gray-700 prose-blockquote:bg-teal-50
+                  prose-blockquote:border-l-4 prose-blockquote:pl-4 prose-blockquote:my-4 prose-blockquote:italic prose-blockquote:text-gray-700 prose-blockquote:rounded
                   prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm prose-code:font-mono prose-code:text-red-600
                   prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:my-4
-                  prose-a:text-teal-600 prose-a:hover:text-teal-800 prose-a:underline
                   prose-img:my-4 prose-img:rounded-lg prose-img:max-w-full prose-img:h-auto
                   prose-strong:font-bold prose-strong:text-gray-900
                   prose-em:italic
@@ -277,8 +300,8 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               <div className="sticky top-8 space-y-6">
                 {/* Tags Sidebar */}
                 {allTags.length > 0 && (
-                  <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-                    <h3 className="text-lg font-bold text-gray-900 mb-4 pb-3 border-b-2 border-teal-500">
+                  <div className="bg-white rounded-lg p-6 shadow-sm">
+                    <h3 className="text-lg font-bold mb-4 pb-3 border-b-2" style={{ color: "#690031", borderBottomColor: "#690031" }}>
                       All Tags
                     </h3>
                     <div className="flex flex-wrap gap-2">
@@ -290,9 +313,10 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                             href={`/tags/${tag.slug}`}
                             className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
                               isCurrentPostTag
-                                ? "bg-teal-600 text-white border border-teal-600 hover:bg-teal-700"
+                                ? "text-white border border-2" 
                                 : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
                             }`}
+                            style={isCurrentPostTag ? { backgroundColor: "#690031", borderColor: "#690031" } : {}}
                           >
                             #{tag.name}
                           </Link>
@@ -303,17 +327,17 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                 )}
 
                 {/* Related Info Widget */}
-                <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4 pb-3 border-b-2 border-teal-500">
+                <div className="bg-white rounded-lg p-6 shadow-sm">
+                  <h3 className="text-lg font-bold mb-4 pb-3 border-b-2" style={{ color: "#690031", borderBottomColor: "#690031" }}>
                     Post Info
                   </h3>
                   <div className="space-y-3 text-sm">
                     <div>
-                      <p className="text-gray-500 uppercase text-xs font-semibold">Status</p>
+                      <p className="text-gray-500 uppercase text-xs font-semibold">Author</p>
                       <p className="text-gray-900 font-medium mt-1">
-                        <span className="inline-block px-2 py-1 bg-teal-100 text-teal-800 rounded text-xs font-semibold">
-                          {post.status}
-                        </span>
+                        {post.author?.first_name && post.author?.last_name 
+                          ? `${post.author.first_name} ${post.author.last_name}` 
+                          : post.author?.email || "Unknown"}
                       </p>
                     </div>
                     <div>
@@ -333,7 +357,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {relatedPosts.map((relatedPost) => (
                   <Link key={relatedPost.id} href={`/posts/${relatedPost.slug}`}>
-                    <article className="group bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                    <article className="group bg-white rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300">
                       {relatedPost.featured_image_url && (
                         <div className="relative h-40 bg-gray-200 overflow-hidden">
                           <img
