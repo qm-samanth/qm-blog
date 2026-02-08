@@ -22,6 +22,9 @@ export async function getPostsByRole(
     if (userRole === "ADMIN") {
       // ADMIN sees all posts
       const result = await db.query.posts.findMany({
+        with: {
+          author: true,
+        },
         orderBy: [desc(posts.created_at)],
         limit,
         offset,
@@ -33,6 +36,9 @@ export async function getPostsByRole(
       // REVIEWER sees only pending posts for review
       const result = await db.query.posts.findMany({
         where: eq(posts.status, "PENDING"),
+        with: {
+          author: true,
+        },
         orderBy: [desc(posts.created_at)],
         limit,
         offset,
@@ -47,6 +53,9 @@ export async function getPostsByRole(
           eq(posts.author_id, userId),
           eq(posts.status, "PUBLISHED")
         ),
+        with: {
+          author: true,
+        },
         orderBy: [desc(posts.created_at)],
         limit,
         offset,
@@ -57,6 +66,9 @@ export async function getPostsByRole(
     // GUEST sees only published posts
     const result = await db.query.posts.findMany({
       where: eq(posts.status, "PUBLISHED"),
+      with: {
+        author: true,
+      },
       orderBy: [desc(posts.created_at)],
       limit,
       offset,
@@ -84,6 +96,9 @@ export async function getReviewQueue(
   try {
     const result = await db.query.posts.findMany({
       where: eq(posts.status, "PENDING"),
+      with: {
+        author: true,
+      },
       orderBy: [desc(posts.created_at)],
       limit,
       offset,
@@ -106,6 +121,9 @@ export async function getPostById(
   try {
     const post = await db.query.posts.findFirst({
       where: eq(posts.id, postId),
+      with: {
+        author: true,
+      },
     });
 
     if (!post) return null;

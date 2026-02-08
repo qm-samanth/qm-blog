@@ -123,7 +123,7 @@ export function PostGridCard({
         {/* Meta Info */}
         <div className="flex items-center justify-between text-xs text-gray-500 mb-4 pb-3 border-t border-gray-100 pt-3">
           <span>
-            by <span className="font-medium text-gray-700">{post.author?.email || "Author"}</span>
+            By <span className="font-medium text-gray-700">{post.author?.first_name && post.author?.last_name ? `${post.author.first_name} ${post.author.last_name}` : post.author?.email || "Author"}</span>
           </span>
           <span>
             {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}

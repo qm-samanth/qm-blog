@@ -154,7 +154,7 @@ export function PostCard({
       <div className="p-6">
         {/* Metadata Row */}
         <div className="flex items-center gap-3 mb-4 text-sm text-gray-600">
-          <span className="font-medium text-gray-700">{post.author?.email || "Author"}</span>
+          <span className="font-medium text-gray-700">By {post.author?.first_name && post.author?.last_name ? `${post.author.first_name} ${post.author.last_name}` : post.author?.email || "Author"}</span>
           <span className="text-gray-300">•</span>
           <time className="text-gray-600">
             {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}

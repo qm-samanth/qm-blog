@@ -5,6 +5,8 @@ export interface User {
   id: string;
   email: string;
   password_hash?: string; // Don't expose in client
+  first_name?: string;
+  last_name?: string;
   role: UserRole;
   created_at: Date;
 }
