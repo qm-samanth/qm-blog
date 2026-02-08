@@ -90,11 +90,14 @@ export function SmartFeed() {
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id === 0 ? null : cat.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+              className={`px-4 py-2 rounded-sm text-sm font-medium whitespace-nowrap transition-all ${
                 (cat.id === 0 && selectedCategory === null) || selectedCategory === cat.id
-                  ? "bg-teal-500 text-white"
+                  ? "text-white"
                   : "text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200"
               }`}
+              style={{
+                backgroundColor: ((cat.id === 0 && selectedCategory === null) || selectedCategory === cat.id) ? "#690031" : undefined
+              }}
             >
               {cat.name}
             </button>
@@ -143,7 +146,7 @@ export function SmartFeed() {
         <div className="lg:col-span-1">
           {/* Latest Posts Widget */}
           <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm sticky top-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-6 pb-3 border-b-2 border-teal-500">
+            <h2 className="text-xl font-bold text-gray-900 mb-6 pb-3 border-b-2" style={{ borderColor: "#690031" }}>
               Latest Posts
             </h2>
             <div className="space-y-5">
@@ -165,11 +168,11 @@ export function SmartFeed() {
                     )}
                     <div className="flex-1 min-w-0">
                       {post.category && (
-                        <p className="text-xs font-bold text-teal-600 uppercase tracking-wide mb-1">
+                        <p className="text-xs font-bold uppercase tracking-wide mb-1" style={{ color: "#690031" }}>
                           {post.category.name}
                         </p>
                       )}
-                      <p className="text-sm font-semibold text-gray-900 group-hover:text-teal-600 transition-colors line-clamp-2">
+                      <p className="text-sm font-semibold text-gray-900 transition-colors line-clamp-2 group-hover:text-gray-700" style={{ color: "inherit" }}>
                         {post.title}
                       </p>
                     </div>

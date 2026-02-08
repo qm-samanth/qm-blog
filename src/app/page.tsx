@@ -32,9 +32,8 @@ export default function Home() {
                 {/* CTA Button */}
                 <div className="mt-10">
                   <button 
-                    style={{ backgroundColor: "#f5dbc6" }} 
-                    className="px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity"
-                    style={{ backgroundColor: "#f5dbc6", color: "#690031" }}
+                    style={{ backgroundColor: "#f5dbc6", color: "#690031" }} 
+                    className="px-8 py-3 rounded-sm font-semibold hover:opacity-90 transition-opacity"
                   >
                     Explore Our Articles
                   </button>

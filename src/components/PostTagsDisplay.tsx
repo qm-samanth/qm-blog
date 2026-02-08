@@ -25,7 +25,7 @@ export function PostTagsDisplay({ tags, layout = "grid" }: PostTagsDisplayProps)
           <Link
             key={tag.id}
             href={`/tags/${tag.slug}`}
-            className="inline-block px-3 py-1.5 bg-gradient-to-r from-teal-50 to-teal-100 text-teal-700 rounded-full text-xs font-semibold hover:from-teal-100 hover:to-teal-200 transition-colors border border-teal-200 shadow-sm"
+            className="inline-block px-3 py-1.5 bg-gradient-to-r from-teal-50 to-teal-100 text-teal-700 rounded-sm text-xs font-semibold hover:from-teal-100 hover:to-teal-200 transition-colors border border-teal-200 shadow-sm"
           >
             <span>#</span> {tag.name}
           </Link>

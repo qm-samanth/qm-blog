@@ -25,16 +25,16 @@ export function Navbar() {
 
           {/* Social Media Icons */}
           <div className="flex items-center gap-2">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:opacity-70 transition" style={{ backgroundColor: "#f5dbc6", color: "#690031" }}>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-sm hover:opacity-70 transition" style={{ backgroundColor: "#f5dbc6", color: "#690031" }}>
               <Facebook className="h-4 w-4" />
             </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:opacity-70 transition" style={{ backgroundColor: "#f5dbc6", color: "#690031" }}>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-sm hover:opacity-70 transition" style={{ backgroundColor: "#f5dbc6", color: "#690031" }}>
               <Twitter className="h-4 w-4" />
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:opacity-70 transition" style={{ backgroundColor: "#f5dbc6", color: "#690031" }}>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-sm hover:opacity-70 transition" style={{ backgroundColor: "#f5dbc6", color: "#690031" }}>
               <Linkedin className="h-4 w-4" />
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:opacity-70 transition" style={{ backgroundColor: "#f5dbc6", color: "#690031" }}>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="p-2 rounded-sm hover:opacity-70 transition" style={{ backgroundColor: "#f5dbc6", color: "#690031" }}>
               <Instagram className="h-4 w-4" />
             </a>
           </div>
@@ -44,7 +44,7 @@ export function Navbar() {
             <>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-white">{session.user.email}</span>
-                <span className="text-xs bg-pink-200 text-purple-900 px-2 py-1 rounded-full">
+                <span className="text-xs bg-pink-200 text-purple-900 px-2 py-1">
                   {session.user.role}
                 </span>
               </div>
@@ -112,7 +112,7 @@ export function Navbar() {
             </>
           ) : (
             <Link href="/auth/signin">
-              <Button style={{ backgroundColor: "#f5dbc6", color: "#690031" }} className="font-bold hover:opacity-90 rounded-full px-6 py-1 h-auto">Sign In</Button>
+              <Button style={{ backgroundColor: "#f5dbc6", color: "#690031" }} className="font-bold hover:opacity-90 px-4 py-1 rounded-sm h-9">Sign In</Button>
             </Link>
           )}
         </div>
