@@ -87,7 +87,7 @@ export default function ReviewPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ backgroundColor: "#fbf7f4" }}>
         <Navbar />
         <main className="container mx-auto px-4 py-8">
           <div className="text-center">Loading review queue...</div>
@@ -100,7 +100,7 @@ export default function ReviewPage() {
   const reviewedPosts = posts.filter((p) => p.status !== "PENDING");
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: "#fbf7f4" }}>
       <Navbar />
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
@@ -117,7 +117,7 @@ export default function ReviewPage() {
         )}
 
         {pendingPosts.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
+          <div className="text-center py-12 bg-white rounded-lg">
             <p className="text-gray-600">No pending posts to review.</p>
           </div>
         ) : (
@@ -145,7 +145,7 @@ export default function ReviewPage() {
               {reviewedPosts.map((post) => (
                 <div
                   key={post.id}
-                  className="bg-white rounded-lg border border-gray-200 p-4 flex items-center justify-between opacity-75"
+                  className="bg-white rounded-lg p-4 flex items-center justify-between opacity-75"
                 >
                   <div>
                     <p className="font-medium text-gray-900">{post.title}</p>
