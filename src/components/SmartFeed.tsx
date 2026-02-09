@@ -16,6 +16,9 @@ export function SmartFeed() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPosts, setTotalPosts] = useState(0);
+  const itemsPerPage = 2;
 
   // Fetch categories
   useEffect(() => {
@@ -44,15 +47,25 @@ export function SmartFeed() {
       try {
         setLoading(true);
         const userRole = (session?.user?.role || "GUEST") as UserRole;
-        const data = await getPostsByRole(userRole, session?.user?.id, 20);
+        const offset = currentPage * itemsPerPage;
+        
+        // Fetch paginated posts
+        const data = await getPostsByRole(userRole, session?.user?.id, itemsPerPage, offset);
         
         // Filter by category if selected
         const filtered = selectedCategory && selectedCategory !== 0
           ? data.filter((post) => post.category_id === selectedCategory)
           : data;
         
+        // For total count, fetch all posts for the count
+        const allPosts = await getPostsByRole(userRole, session?.user?.id, 10000, 0);
+        const allFiltered = selectedCategory && selectedCategory !== 0
+          ? allPosts.filter((post) => post.category_id === selectedCategory)
+          : allPosts;
+        
         setPosts(filtered);
-        setLatestPosts(data.slice(0, 5));
+        setTotalPosts(allFiltered.length);
+        setLatestPosts(allPosts.slice(0, 5));
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch posts");
       } finally {
@@ -61,7 +74,7 @@ export function SmartFeed() {
     }
 
     fetchPosts();
-  }, [status, session?.user?.id, session?.user?.role, selectedCategory]);
+  }, [status, session?.user?.id, session?.user?.role, selectedCategory, currentPage]);
 
   const handleDelete = (postId: string) => {
     setPosts(posts.filter((p) => p.id !== postId));
@@ -87,7 +100,10 @@ export function SmartFeed() {
           {categories.map((cat) => (
             <button
               key={cat.id}
-              onClick={() => setSelectedCategory(cat.id === 0 ? null : cat.id)}
+              onClick={() => {
+                setSelectedCategory(cat.id === 0 ? null : cat.id);
+                setCurrentPage(0);
+              }}
               className={`px-4 py-2 rounded-sm text-sm font-medium whitespace-nowrap transition-all ${
                 (cat.id === 0 && selectedCategory === null) || selectedCategory === cat.id
                   ? "text-white"
@@ -115,17 +131,57 @@ export function SmartFeed() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {posts.map((post) => (
-                <PostGridCard
-                  key={post.id}
-                  post={post}
-                  userRole={(session?.user?.role || "GUEST") as UserRole}
-                  userId={session?.user?.id}
-                  onDelete={handleDelete}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {posts.map((post) => (
+                  <PostGridCard
+                    key={post.id}
+                    post={post}
+                    userRole={(session?.user?.role || "GUEST") as UserRole}
+                    userId={session?.user?.id}
+                    onDelete={handleDelete}
+                  />
+                ))}
+              </div>
+              
+              {/* Pagination Controls */}
+              <div className="flex items-center justify-center mt-8 px-4 py-6 bg-gray-50 rounded-lg gap-2">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+                  disabled={currentPage === 0}
+                  className="px-3 py-2 rounded font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-gray-300 hover:bg-white"
+                >
+                  ←
+                </button>
+                
+                {/* Page Numbers */}
+                {Array.from({ length: Math.ceil(totalPosts / itemsPerPage) || 1 }).map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentPage(index)}
+                    className={`px-4 py-2 rounded font-medium transition-all border ${
+                      currentPage === index
+                        ? "border-gray-400"
+                        : "border-gray-300 hover:bg-white"
+                    }`}
+                    style={{
+                      backgroundColor: currentPage === index ? "#690031" : undefined,
+                      color: currentPage === index ? "white" : undefined,
+                    }}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+                
+                <button
+                  onClick={() => setCurrentPage(prev => prev + 1)}
+                  disabled={posts.length < itemsPerPage || (currentPage + 1) * itemsPerPage >= totalPosts}
+                  className="px-3 py-2 rounded font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-gray-300 hover:bg-white"
+                >
+                  →
+                </button>
+              </div>
+            </>
           )}
         </div>
 
